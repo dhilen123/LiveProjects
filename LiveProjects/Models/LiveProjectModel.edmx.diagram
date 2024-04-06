@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0432f86dcc374101ba7f272b7628fff9" Name="Diagram1">
+        <EntityTypeShape EntityType="liveProjectModel.Allocation" Width="1.5" PointX="3" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Designation" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Project" Width="1.5" PointX="6" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Registration" Width="1.5" PointX="5.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Resource" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Role" Width="1.5" PointX="0.75" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.Technology" Width="1.5" PointX="0.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="liveProjectModel.technologyGroup" Width="1.5" PointX="0.75" PointY="13.125" IsExpanded="true" />
+        <AssociationConnector Association="liveProjectModel.FK__Allocatio__projI__1DB06A4F" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Allocatio__resId__1EA48E88" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Allocatio__techn__208CD6FA" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Allocation__role__1F98B2C1" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__desig__7A672E12" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Project__projMan__14270015" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Project__technol__151B244E" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__prima__787EE5A0" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__resRo__7B5B524B" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__secon__797309D9" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__techn__778AC167" ManuallyRouted="false" />
+        <AssociationConnector Association="liveProjectModel.FK_Allocation_technologyGroup" />
+        <AssociationConnector Association="liveProjectModel.FK_Technology_technologyGroup" />
+        <EntityTypeShape EntityType="liveProjectModel.Type" Width="1.5" PointX="8.375" PointY="0.875" />
+        <AssociationConnector Association="liveProjectModel.FK__Resources__TypeI__6FE99F9F" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

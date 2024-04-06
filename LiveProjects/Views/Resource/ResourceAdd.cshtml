@@ -1,0 +1,224 @@
+﻿
+@model LiveProjects.Models.Resource
+
+@{
+    ViewBag.Title = "ResourceAdd";
+}
+
+
+<h3 class="mt-4">Create Resource</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="container border border-2 border-secondary rounded-2 w-75 mt-3 ms-0">
+        <div class="row mt-4 ms-3">
+            <div class="col-md-5">
+                <div class="form-group fw-bold">
+                    @Html.LabelFor(model => model.resName)
+                    <label class="text-danger">*</label>
+                    @Html.EditorFor(model => model.resName, new { htmlAttributes = new { @class = "form-control", placeholder = " Enter Resource Name" } })
+                    @Html.ValidationMessageFor(model => model.resName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group fw-bold mt-3">
+                    @Html.LabelFor(model => model.resDepartment)
+                    <label class="text-danger">*</label>
+                    @Html.EditorFor(model => model.resDepartment, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Department" } })
+                    @Html.ValidationMessageFor(model => model.resDepartment, "", new { @class = "text-danger" })
+                </div>
+                @{
+                    List<SelectListItem> data2 = ViewBag.designationList;
+                }
+                <div class="form-group fw-bold mt-3">
+                    @Html.LabelFor(model => model.designation)
+                    <label class="text-danger">*</label>
+                    @Html.DropDownListFor(model => model.designation, data2, "---Select---", new { @class = "form-control " })
+                    @Html.ValidationMessageFor(model => model.designation, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @{
+                        List<SelectListItem> data1 = ViewBag.roleList;
+                    }
+                    <div class="form-group fw-bold mt-3">
+                        @Html.LabelFor(model => model.resRole)
+                        <label class="text-danger">*</label>
+                        @Html.DropDownListFor(model => model.resRole, data1, "---Select---", new { @class = "form-control " })
+                        @Html.ValidationMessageFor(model => model.resRole, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 fw-bold">
+                @*<div class="form-group">
+            <label>Technology Group</label><label class="text-danger">*</label>
+            <select class="form-control" id="technologyGroup" name="technologyGroup" required>
+                <option value="-1"></option>
+            </select>
+            <div id="techGroupValidation"></div>
+        </div>*@
+
+                <div class="form-group" style="padding-top:5px;">
+                    <label>Technology Group</label><label class="text-danger">*</label>
+                    @Html.DropDownList("technologyGroup", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.technologyGroup, "", new { @class = "text-danger" })
+                    <div id="techGroupValidation"></div>
+                </div>
+
+                <div class="form-group fw-bold mt-3">
+                    <div class="form-group">
+                        <label>Primary Technology</label><label class="text-danger">*</label>
+                        <select class="form-control" id="primaryTechnology" name="primaryTechnology" required>
+                            <option value="-1">Select Technology</option>
+                        </select>
+                        <div id="countryValidation"></div>
+                    </div>
+                </div>
+                @{
+                    List<SelectListItem> data5 = ViewBag.technologiList;
+                }
+                <div class="form-group fw-bold mt-3">
+                    @Html.LabelFor(model => model.secondaryTechnology)
+                    <label class="text-danger">*</label>
+                    @Html.DropDownListFor(model => model.secondaryTechnology, data5, "---Select---", new { @class = "form-control " })
+                    @Html.ValidationMessageFor(model => model.secondaryTechnology, "", new { @class = "text-danger" })
+                    <label id="secondaryerror" class="text-danger"></label>
+                </div>
+
+                <div class="form-group fw-bold mt-3">
+                    @Html.LabelFor(model => model.isActive)
+                    <div class="checkbox">
+                        @Html.CheckBox("isActive")
+                        @Html.ValidationMessageFor(model => model.isActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group mt-4">
+                    <input type="submit" value="Create" class="btn btn-success ms-4 mb-3" />
+                    <span><a href="GetAllResource" class="btn btn-primary ms-3 mb-3" role="button">Back to List</a></span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@section Scripts{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+
+            function validateDateInput(input, fieldName) {
+                const selectedDate = new Date(input.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Remove the time part for comparison
+
+                if (selectedDate < today) {
+                    alert('Please enter the current date or a future date for ' + fieldName + '.');
+                    input.value = ''; // Clear the input field
+                }
+            }
+
+
+            startDateInput.addEventListener('change', function () {
+                validateDateInput(startDateInput, 'Start Date');
+            });
+
+
+            endDateInput.addEventListener('change', function () {
+                validateDateInput(endDateInput, 'End Date');
+            });
+        });
+
+
+
+
+        function getGroupTechnology() {
+            $.ajax({
+                type: "GET",
+                url: "/Resource/getGroupTechnology",
+                success: function (data) {
+                    var s = '<option value="-1">Select TechnologyGroup</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].techGroupId + '">' + data[i].techGroupName + '</option>';
+                    }
+                    $("#technologyGroup").html(s);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            getGroupTechnology();
+            $("#technologyGroup").change(function () {
+                var TechID = $("#technologyGroup").val();
+                $.ajax({
+                    type: "GET",
+                    url: "/Resource/Technologies",
+                    data: { TechID: TechID },
+                    success: function (data) {
+                        var s = '<option value="-1" > Select Primary Technology</option> ';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].techId + '">' + data[i].techName + '</option>'
+                        }
+                        $("#primaryTechnology").html(s);
+                    }
+                });
+
+                var initialSecondaryValue = $('#secondaryTechnology').val();
+
+                $('#primaryTechnology, #secondaryTechnology').change(function () {
+                    var primaryTechName = $('#primaryTechnology option:selected').text();
+                    var secondaryTechName = $('#secondaryTechnology option:selected').text();
+
+                    if (primaryTechName != "Select Technology" && secondaryTechName != "---Select---" && primaryTechName === secondaryTechName) {
+                        $('#secondaryerror').html("You cannot select the same " + primaryTechName + " technology");
+                        // Restore the initial value of the secondary dropdown
+                        $('#secondaryTechnology').val(initialSecondaryValue);
+                    } else {
+                        $('#secondaryerror').html("");
+                        // Store the current value of the secondary dropdown
+                        $('#secondaryTechnology').data('prevValue', secondaryTechName);
+                    }
+                });
+            });
+
+
+
+            $('form').submit(function (event) {
+                var selectedprimary = $('#primaryTechnology').val();
+                var secondarytech = $('#secondaryTechnology').val();
+                if (selectedprimary == null || selectedprimary === '-1') {
+                    event.preventDefault();
+                    $('#countryValidation').text('Please select a primary technology.').addClass('text-danger');
+                } else {
+                    $('#countryValidation').text('').removeClass('text-danger');
+                }
+
+            });
+
+
+
+            $('form').submit(function (event) {
+                var selectedCountry = $('#technologyGroup').val();
+                if (selectedCountry == null || selectedCountry === '-1') {
+                    event.preventDefault();
+                    $('#techGroupValidation').text('Please select a technology gruop.').addClass('text-danger');
+                } else {
+                    $('#techGroupValidation').text('').removeClass('text-danger');
+                }
+            });
+
+        });
+
+    </script>
+}
+
+
+

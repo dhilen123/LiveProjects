@@ -1,0 +1,182 @@
+﻿
+@model LiveProjects.Models.Pagination.ResourcePagination
+
+@{
+    ViewBag.Title = "GetAllResource";
+}
+<style>
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination a,
+        .pagination span {
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            cursor: pointer;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+
+        .pagination .active a,
+        .pagination a:hover {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+
+        .pagination .disabled a,
+        .pagination .disabled span {
+            color: #ddd;
+            pointer-events: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+</style>
+<link href="~/css/link.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<link href="~/Content/styles.css" rel="stylesheet" />
+
+<div class="card mb-4 mt-5">
+    <div class="card-header">
+        <i class="bi bi-people me-1"></i>
+        <span class="fs-5">Resource</span>
+
+        <a href="../Resource/ResourceAdd" class="btn btn-outline-success float-end"> <i class="fa fa-plus"></i>Add New</a>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="datatablesSimple">
+                <thead>
+                    <tr>
+                        
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Technology Group</th>
+                        <th>Primary Technology</th>
+                        <th>Secondary Technology</th>
+                        <th>Designation</th>
+                        <th>Role</th>
+                        <th>isActive</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                    @foreach (var item in Model.List)
+                    {
+                        <tr>
+                            @{ i++;}
+                            <td>@item.resName</td>
+                            <td>@item.resDepartment</td>
+                            <td>@item.technologyGroup1.techGroupName</td>
+                            <td>@item.Technology.techName</td>
+                            <td>@item.Technology1.techName</td>
+                            <td>@item.Designation1.desigName</td>
+                            <td>@item.Role.roleName</td>
+                            <td>@item.isActive</td>
+                            <td>
+                                <input type="button" value="Edit" class="btn btn-outline-primary ms-1" onclick="location.href='@Url.Action("ResourceEdit", "Resource", new { resId = item.resId })'" />
+                                <a href="#" onclick="Delete(@item.resId)" class="btn btn-outline-danger ms-1">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (@Model.Pager.EndPage > 1)
+{
+<ul class="pagination">
+    
+    @if (@Model.Pager.CurrentPage > 1)
+    {
+<li>
+    <a href="~/Resource/GetAllResource">First</a>
+</li>
+<li>
+    <a href="~/Resource/GetAllResource?page=@(Model.Pager.CurrentPage - 1)">Previous</a>
+</li>
+}
+   
+    @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+    {
+<li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+    <a href="~/Resource/GetAllResource?page=@page">@page</a>
+</li>
+}
+  
+    @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+    {
+<li>
+    <a href="~/Resource/GetAllResource?page=@(Model.Pager.CurrentPage + 1)">Next</a>
+</li>
+<li>
+    <a href="~/Resource/GetAllResource?page=@(Model.Pager.TotalPages)">Last</a>
+</li>
+}
+</ul>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8/dist/sweetalert2.all.min.js"></script>
+@section Scripts{
+
+    <script type="text/javascript">
+        function Delete(ID) {
+            Swal.fire({
+                title: 'Are you sure want to delete?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Resource/Delete/' + ID,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data == "Resource Already Used in other table.") {
+                                Swal.fire({
+                                    text: data,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    text: data,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Some Error Occurred',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+    </script>
+}
+

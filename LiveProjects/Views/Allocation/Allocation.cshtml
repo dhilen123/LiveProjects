@@ -1,0 +1,353 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model LiveProjects.Models.Pagination.AllocationPagination
+@{
+    ViewBag.Title = "Allocation";
+}
+<link href="~/css/Link.css" rel="stylesheet" />
+<link href="~/css/Registration.css" rel="stylesheet" />
+<link href="~/Content/chosen.min.css" rel="stylesheet" />
+<style>
+
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+        .pagination a,
+        .pagination span {
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            cursor: pointer;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+
+            .pagination .active a,
+            .pagination a:hover {
+                background-color: #007bff;
+                color: #fff;
+                border: 1px solid #007bff;
+            }
+
+        .pagination .disabled a,
+        .pagination .disabled span {
+            color: #ddd;
+            pointer-events: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        font-size: 1rem;
+    }
+
+    table {
+        font-size: 1.5rem;
+    }
+
+    th, td {
+        font-size: 1rem;
+    }
+
+    @@media (max-width: 768px) {
+
+        html {
+            font-size: 14px;
+        }
+
+        table {
+            font-size: 1.2rem;
+        }
+
+        th, td {
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+
+        html {
+            font-size: 12px;
+        }
+
+        table {
+            font-size: 1rem;
+        }
+
+        th, td {
+            font-size: 0.8rem;
+        }
+    }
+
+    .chosen-container {
+        width: 300px !important;
+    }
+
+    .chosen-choices {
+        border-radius: 3px !important;
+        min-height: 40px;
+    }
+
+        .chosen-choices:focus {
+            border: 5px solid skyblue !important;
+            background-color: blue !important;
+        }
+
+    .search-choice {
+        border: none !important;
+        padding: 10px 20px 10px 10px !important;
+        background-color: #9ddef9 !important;
+        position: relative;
+        margin: 3px 5px 3px 0;
+        padding: 3px 20px 3px 5px;
+        border: 1px solid #aaa;
+        max-width: 100%;
+        border-radius: 3px;
+        background-image: none !important;
+        color: #333;
+        line-height: 13px;
+        cursor: default;
+        font-weight: 500 !important;
+    }
+
+    .search-choice-close {
+        top: 12px !important;
+        right: 5px !important;
+    }
+
+    .chosen-search-input {
+        margin-top: 8px !important;
+    }
+
+    .result-selected, .active-result {
+        padding: 10px !important;
+    }
+
+    .chosen-drop {
+        border-radius: 3px !important;
+    }
+
+    .highlighted {
+        border-radius: 3px !important;
+    }
+
+
+    .highlighted {
+        background-color: yellow !important;
+        font-weight: 700;
+        color: black !important;
+        background: #9ddef9 !important;
+    }
+</style>
+
+<div class="card mb-4 mt-4">
+    <div class="card-header">
+        <i class="bi bi-boxes me-1"></i>
+        <span class="fs-5 me-3">Allocation</span>
+        <select data-placeholder="Search Resource Name" multiple class="chosen-select" name="test">
+            <option value=""></option>
+            @foreach (var option in (IEnumerable<SelectListItem>)ViewBag.resId)
+            {
+<option value="@option.Value">@option.Text</option>
+}
+        </select>
+        <button id="searchButton" class="btn btn-outline-primary ms-2 w-5">Search</button>
+
+        <a href="../Allocation/AllocationAdd" class="btn btn-outline-success float-end"> <i class="fa fa-plus"></i>Add New</a>
+
+    </div>
+    <div class="card-body table-responsive">
+        <table class="table table-bordered text-center" id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Resource Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Allocation%</th>
+                    <th>Billable</th>
+                    <th>Role</th>
+                    <th>technologyGroup</th>
+                    <th>Technology</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="myTbody">
+                @{ int i = 1;}
+                @foreach (var item in Model.List)
+                {
+    <tr>
+        @{ i++;}
+        <td>@item.Project.projName</td>
+        <td>@item.Resource.resName</td>
+        <td>@item.startDate</td>
+        <td>@item.endDate</td>
+        <td>@item.allocation1</td>
+        <td>@item.isBillable</td>
+        <td>@item.Role1.roleName</td>
+        <td>@item.technologyGroup.techGroupName</td>
+        <td>@item.Technology1.techName</td>
+        <td>
+            <input type="button" value="Edit" class="btn btn-outline-primary" onclick="location.href='@Url.Action("AllocationEdit", "Allocation", new { id = item.allocId })'" />
+
+            <a href="#" onclick="Delete(@item.allocId)" class="btn btn-outline-danger ms-1">Delete</a>
+        </td>
+    </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@if (@Model.Pager.EndPage > 1)
+{
+<ul class="pagination">
+
+    @if (@Model.Pager.CurrentPage > 1)
+    {
+<li>
+    <a href="~/Allocation/Allocation">First</a>
+</li>
+<li>
+    <a href="~/Allocation/Allocation?page=@(Model.Pager.CurrentPage - 1)">Previous</a>
+</li>
+}
+
+    @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+    {
+        <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+            <a href="~/Allocation/Allocation?page=@page">@page</a>
+        </li>
+    }
+
+    @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+    {
+<li>
+    <a href="~/Allocation/Allocation?page=@(Model.Pager.CurrentPage + 1)">Next</a>
+</li>
+<li>
+    <a href="~/Allocation/Allocation?page=@(Model.Pager.TotalPages)">Last</a>
+</li>
+}
+</ul>
+}
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8/dist/sweetalert2.all.min.js"></script>*@
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(".chosen-select").chosen({
+            no_results_text: "Oops,nothing Found!"
+        })
+
+        $('#searchButton').click(function () {
+            var selectedValues = $('.chosen-select').val();
+            $.ajax({
+                url: '/Allocation/Search',
+                type: 'GET',
+                data: { selectedValues: selectedValues.join(',') },
+                traditional: true,
+                success: function (data) {
+                    var tbody = $('#myTbody');
+                    tbody.empty();
+                    if (data.data.length === 0) {
+                        tbody.append('<tr><td colspan="10">No data found</td></tr>');
+                    } 
+                    
+                    $.each(data.data, function (index, item) {
+                        var row = $('<tr>');
+                        row.append('<td>' + item.Project.projName + '</td>');
+                        row.append('<td>' + item.Resource.resName + '</td>');
+                        var startDate = new Date(parseInt(item.startDate.replace(/\/Date\((-?\d+)\)\//, '$1')));
+                        row.append('<td>' + startDate.toLocaleDateString() + '</td>');
+                        var endDate = new Date(parseInt(item.endDate.replace(/\/Date\((-?\d+)\)\//, '$1')));
+                        row.append('<td>' + endDate.toLocaleDateString() + '</td>');
+                        row.append('<td>' + item.allocation1 + '</td>');
+
+                        row.append('<td><input type="checkbox"' + (item.isBillable ? ' checked' : 'unchecked') + ' disabled></td>');
+                        row.append('<td>' + item.Role1.roleName + '</td>');
+                        row.append('<td>' + item.technologyGroup.techGroupName + '</td>');
+                        row.append('<td>' + item.Technology1.techName + '</td>');
+                        row.append('<td>' +
+                            '<input type="button" value="Edit" class="btn btn-outline-info" onclick="editResource(' + item.allocId + ')" /> <br />' +
+                            '<a href="#" style="margin-top:5px;" onclick="Delete(' + item.allocId + ')" class="btn btn-outline-danger">Delete</a>' +
+                            '</td>');
+
+                        tbody.append(row);
+                    });
+                },
+                error: function (error) {
+                    alert("fail");
+                    console.error(error);
+                }
+            });
+        });
+
+        function editResource(allocId) {
+            window.location.href = '/Allocation/AllocationEdit/' + allocId;
+        }
+
+        function Delete(ID) {
+            Swal.fire({
+                title: 'Are you sure want to delete?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Allocation/Delete/' + ID,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data == "Resource Already Used in other table.") {
+                                Swal.fire({
+                                    text: data,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    text: data,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Some Error Occurred',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+    </script>
+}
+
+
+

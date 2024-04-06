@@ -1,0 +1,168 @@
+﻿@model LiveProjects.Models.Allocation
+
+@{
+    ViewBag.Title = "AllocationEdit";
+}
+<link href="~/External Link/link.css" rel="stylesheet" />
+<link href="~/css/Registration.css" rel="stylesheet" />
+
+@using (Html.BeginForm("AllocationEdit", "Allocation", FormMethod.Post))
+{
+@Html.AntiForgeryToken()
+<h5 class="mt-5">Sigma Solve Allocation Management</h5>
+<fieldset class="mt-4">
+    <legend>
+        Details
+    </legend>
+    <div class="container form-container p-5">
+        <form>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group fw-bold ms-5">
+                        @Html.HiddenFor(model => model.allocId)
+                        @{
+                            List<SelectListItem> data = ViewBag.ProjectList;
+                        }
+                        @Html.LabelFor(model => model.projId, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.projId, data, "---Select---", new { @class = "form-control mt-2" })
+                        @Html.ValidationMessageFor(model => model.projId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        @{
+                            List<SelectListItem> data1 = ViewBag.ResourceList;
+                        }
+                        @Html.LabelFor(model => model.resId, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.resId, data1, "---Select---", new { @class = "form-control mt-2" })
+                        @Html.ValidationMessageFor(model => model.resId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        @Html.LabelFor(model => model.startDate, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.startDate, new { htmlAttributes = new { @class = "form-control mt-2" } })
+                        @Html.ValidationMessageFor(model => model.startDate, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        @Html.LabelFor(model => model.endDate, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.endDate, new { htmlAttributes = new { @class = "form-control mt-2" } })
+                        @Html.ValidationMessageFor(model => model.endDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-group fw-bold ms-5">
+                        @Html.LabelFor(model => model.allocation1, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.allocation1, new { htmlAttributes = new { @class = "form-control mt-2" } })
+                        @Html.ValidationMessageFor(model => model.allocation1, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        @Html.LabelFor(model => model.isBillable, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.isBillable, new List<SelectListItem> {
+                                new SelectListItem { Text = "True", Value = "true" },
+                                new SelectListItem { Text = "False", Value = "false" }
+                            }, "--Select--", new { @class = "form-control mt-2", placeholder = "Select Billable" })
+                        @Html.ValidationMessageFor(model => model.isBillable, "", new { @class = "text-danger" })
+                    </div>
+
+
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        <div class="form-group" style="padding-top:5px;">
+                            <label>Technology Group</label><label class="text-danger">*</label>
+                            @Html.DropDownList("techGroup", null, htmlAttributes: new { @class = "form-control"})
+                            @Html.ValidationMessageFor(x => x.techGroup, "", new { @class = "text-danger" })
+                            <div id="techGroupValidation"></div>
+                        </div>
+                    </div>
+                    <div class="form-group fw-bold ms-5">
+                        <div class="form-group" style="padding-top:20px">
+                            <label>Technology</label><label class="text-danger">*</label>
+                                @Html.DropDownList("technology", null, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.technology, "", new { @class = "text-danger" })
+                            <div id="techValidation"></div>
+                        </div>
+                    </div>
+                    <div class="form-group fw-bold mt-3 ms-5">
+                        @{
+                            List<SelectListItem> data3 = ViewBag.RoleList;
+                        }
+                        @Html.LabelFor(model => model.role, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.role, data3, "---Select---", new { @class = "form-control mt-2" })
+                        @Html.ValidationMessageFor(model => model.role, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group mt-4">
+                            <input type="submit" value="Save Changes" class="btn btn-success mb-3 ms-5" />
+                            <span><a href="@Url.Action("Allocation")" class="btn btn-primary ms-3 mb-3" role="button">Back to List</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+           /* getGroupTechnology();*/
+
+           
+            $('form').submit(function (event) {
+                var selectedCountry = $('#technology').val();
+                if (selectedCountry == null || selectedCountry === '-1') {
+                    event.preventDefault();
+                    $('#techValidation').text('Please select a primary technology.').addClass('text-danger');
+                } else {
+                    $('#techValidation').text('').removeClass('text-danger');
+                }
+            });
+
+            $('form').submit(function (event) {
+                var selectedCountry = $('#techGroup').val();
+                if (selectedCountry == null || selectedCountry === '-1') {
+                    event.preventDefault();
+                    $('#techGroupValidation').text('Please select a technology group.').addClass('text-danger');
+                } else {
+                    $('#techGroupValidation').text('').removeClass('text-danger');
+                }
+            });
+
+            $("#techGroup").change(function () {
+                var TechGroupID = $("#techGroup").val();
+                $.ajax({
+                    type: "GET",
+                    url: "/Allocation/Technologies",
+                    data: { TechID: TechGroupID },
+                    success: function (data) {
+                        var s = '<option value="-1">Select Technology</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].techId + '">' + data[i].techName + '</option>';
+                        }
+                        $("#technology").html(s);
+                    }
+                });
+            });
+            
+        });
+
+
+        function getGroupTechnology() {
+            $.ajax({
+                type: "GET",
+                url: "/Allocation/getGroupTechnology",
+                success: function (data) {
+                    var s = '<option value="-1">Select technologyGroup</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].techGroupId + '">' + data[i].techGroupName + '</option>';
+                    }
+                    $("#techGroup").html(s);
+
+                     var selectedGroupId = @Model.techGroup;
+                    $("#techGroup").val(selectedGroupId);
+                }
+            });
+        }
+
+
+    </script>
+}

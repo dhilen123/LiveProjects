@@ -1,0 +1,848 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="liveProjectModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Allocation">
+          <Key>
+            <PropertyRef Name="allocId" />
+          </Key>
+          <Property Name="allocId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="projId" Type="int" />
+          <Property Name="resId" Type="int" />
+          <Property Name="startDate" Type="datetime" />
+          <Property Name="endDate" Type="datetime" />
+          <Property Name="allocation" Type="int" />
+          <Property Name="isBillable" Type="bit" />
+          <Property Name="role" Type="int" />
+          <Property Name="technology" Type="int" />
+          <Property Name="techGroup" Type="int" />
+        </EntityType>
+        <EntityType Name="Designation">
+          <Key>
+            <PropertyRef Name="designId" />
+          </Key>
+          <Property Name="designId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="desigName" Type="varchar" MaxLength="30" />
+          <Property Name="description" Type="nvarchar" MaxLength="200" />
+          <Property Name="enable" Type="bit" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="projId" />
+          </Key>
+          <Property Name="projId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="projName" Type="varchar" MaxLength="100" />
+          <Property Name="projManager" Type="int" />
+          <Property Name="technology" Type="int" />
+          <Property Name="startdate" Type="date" />
+          <Property Name="enddate" Type="date" />
+          <Property Name="status" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Registration">
+          <Key>
+            <PropertyRef Name="regId" />
+          </Key>
+          <Property Name="regId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="regName" Type="nvarchar" MaxLength="30" />
+          <Property Name="email" Type="nvarchar" MaxLength="30" />
+          <Property Name="password" Type="varchar" MaxLength="16" />
+          <Property Name="mobile" Type="varchar" MaxLength="10" />
+          <Property Name="birthDate" Type="date" />
+          <Property Name="address" Type="nvarchar" MaxLength="200" />
+          <Property Name="gender" Type="varchar" MaxLength="15" />
+        </EntityType>
+        <EntityType Name="Resources">
+          <Key>
+            <PropertyRef Name="resId" />
+          </Key>
+          <Property Name="resId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="resName" Type="nvarchar" MaxLength="30" />
+          <Property Name="resDepartment" Type="nvarchar" MaxLength="30" />
+          <Property Name="technologyGroup" Type="int" />
+          <Property Name="primaryTechnology" Type="int" />
+          <Property Name="secondaryTechnology" Type="int" />
+          <Property Name="designation" Type="int" />
+          <Property Name="resRole" Type="int" />
+          <Property Name="isActive" Type="bit" />
+          <Property Name="TypeId" Type="int" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="roleId" />
+          </Key>
+          <Property Name="roleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="roleName" Type="varchar" MaxLength="30" />
+          <Property Name="description" Type="varchar" MaxLength="200" />
+          <Property Name="enable" Type="bit" />
+        </EntityType>
+        <EntityType Name="Technology">
+          <Key>
+            <PropertyRef Name="techId" />
+          </Key>
+          <Property Name="techId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="techName" Type="varchar" MaxLength="30" />
+          <Property Name="description" Type="varchar" MaxLength="100" />
+          <Property Name="enable" Type="bit" />
+          <Property Name="techGroupId" Type="int" />
+        </EntityType>
+        <EntityType Name="technologyGroup">
+          <Key>
+            <PropertyRef Name="techGroupId" />
+          </Key>
+          <Property Name="techGroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="techGroupName" Type="varchar" MaxLength="30" />
+          <Property Name="description" Type="varchar" MaxLength="200" />
+          <Property Name="enable" Type="bit" />
+        </EntityType>
+        <EntityType Name="Type">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TypeName" Type="nvarchar" MaxLength="30" />
+          <Property Name="Hours" Type="float" />
+        </EntityType>
+        <Association Name="FK__Allocatio__projI__45F365D3">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="projId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="projId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocatio__resId__46E78A0C">
+          <End Role="Resources" Type="Self.Resources" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="resId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="resId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocatio__techn__48CFD27E">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="technology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocation__role__47DBAE45">
+          <End Role="Role" Type="Self.Role" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="roleId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__projMan__49C3F6B7">
+          <End Role="Resources" Type="Self.Resources" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="resId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="projManager" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__technol__4AB81AF0">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="technology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__desig__4E88ABD4">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="designId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="designation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__prima__4CA06362">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="primaryTechnology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__resRo__4F7CD00D">
+          <End Role="Role" Type="Self.Role" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="roleId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="resRole" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__secon__4D94879B">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="secondaryTechnology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__techn__4BAC3F29">
+          <End Role="technologyGroup" Type="Self.technologyGroup" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="technologyGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__TypeI__6FE99F9F">
+          <End Role="Type" Type="Self.Type" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Type">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="TypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Allocation_technologyGroup">
+          <End Role="technologyGroup" Type="Self.technologyGroup" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="techGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Technology_technologyGroup">
+          <End Role="technologyGroup" Type="Self.technologyGroup" Multiplicity="0..1" />
+          <End Role="Technology" Type="Self.Technology" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Technology">
+              <PropertyRef Name="techGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="liveProjectModelStoreContainer">
+          <EntitySet Name="Allocation" EntityType="Self.Allocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resources" EntityType="Self.Resources" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Technology" EntityType="Self.Technology" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="technologyGroup" EntityType="Self.technologyGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Type" EntityType="Self.Type" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Allocatio__projI__45F365D3" Association="Self.FK__Allocatio__projI__45F365D3">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Allocation" EntitySet="Allocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocatio__resId__46E78A0C" Association="Self.FK__Allocatio__resId__46E78A0C">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Allocation" EntitySet="Allocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocatio__techn__48CFD27E" Association="Self.FK__Allocatio__techn__48CFD27E">
+            <End Role="Technology" EntitySet="Technology" />
+            <End Role="Allocation" EntitySet="Allocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocation__role__47DBAE45" Association="Self.FK__Allocation__role__47DBAE45">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="Allocation" EntitySet="Allocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Project__projMan__49C3F6B7" Association="Self.FK__Project__projMan__49C3F6B7">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Project__technol__4AB81AF0" Association="Self.FK__Project__technol__4AB81AF0">
+            <End Role="Technology" EntitySet="Technology" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__desig__4E88ABD4" Association="Self.FK__Resources__desig__4E88ABD4">
+            <End Role="Designation" EntitySet="Designation" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__prima__4CA06362" Association="Self.FK__Resources__prima__4CA06362">
+            <End Role="Technology" EntitySet="Technology" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__resRo__4F7CD00D" Association="Self.FK__Resources__resRo__4F7CD00D">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__secon__4D94879B" Association="Self.FK__Resources__secon__4D94879B">
+            <End Role="Technology" EntitySet="Technology" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__techn__4BAC3F29" Association="Self.FK__Resources__techn__4BAC3F29">
+            <End Role="technologyGroup" EntitySet="technologyGroup" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__TypeI__6FE99F9F" Association="Self.FK__Resources__TypeI__6FE99F9F">
+            <End Role="Type" EntitySet="Type" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Allocation_technologyGroup" Association="Self.FK_Allocation_technologyGroup">
+            <End Role="technologyGroup" EntitySet="technologyGroup" />
+            <End Role="Allocation" EntitySet="Allocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Technology_technologyGroup" Association="Self.FK_Technology_technologyGroup">
+            <End Role="technologyGroup" EntitySet="technologyGroup" />
+            <End Role="Technology" EntitySet="Technology" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="liveProjectModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Allocation">
+          <Key>
+            <PropertyRef Name="allocId" />
+          </Key>
+          <Property Name="allocId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="projId" Type="Int32" />
+          <Property Name="resId" Type="Int32" />
+          <Property Name="startDate" Type="DateTime" Precision="3" />
+          <Property Name="endDate" Type="DateTime" Precision="3" />
+          <Property Name="allocation1" Type="Int32" />
+          <Property Name="isBillable" Type="Boolean" />
+          <Property Name="role" Type="Int32" />
+          <Property Name="technology" Type="Int32" />
+          <NavigationProperty Name="Project" Relationship="Self.FK__Allocatio__projI__1DB06A4F" FromRole="Allocation" ToRole="Project" />
+          <NavigationProperty Name="Resource" Relationship="Self.FK__Allocatio__resId__1EA48E88" FromRole="Allocation" ToRole="Resources" />
+          <NavigationProperty Name="Technology1" Relationship="Self.FK__Allocatio__techn__208CD6FA" FromRole="Allocation" ToRole="Technology" />
+          <NavigationProperty Name="Role1" Relationship="Self.FK__Allocation__role__1F98B2C1" FromRole="Allocation" ToRole="Role" />
+          <Property Name="techGroup" Type="Int32" />
+          <NavigationProperty Name="technologyGroup" Relationship="liveProjectModel.FK_Allocation_technologyGroup" FromRole="Allocation" ToRole="technologyGroup" />
+        </EntityType>
+        <EntityType Name="Designation">
+          <Key>
+            <PropertyRef Name="designId" />
+          </Key>
+          <Property Name="designId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="desigName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="enable" Type="Boolean" />
+          <NavigationProperty Name="Resources" Relationship="Self.FK__Resources__desig__7A672E12" FromRole="Designation" ToRole="Resources" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="projId" />
+          </Key>
+          <Property Name="projId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="projName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="projManager" Type="Int32" />
+          <Property Name="technology" Type="Int32" />
+          <Property Name="startdate" Type="DateTime" Precision="0" />
+          <Property Name="enddate" Type="DateTime" Precision="0" />
+          <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Allocations" Relationship="Self.FK__Allocatio__projI__1DB06A4F" FromRole="Project" ToRole="Allocation" />
+          <NavigationProperty Name="Resource" Relationship="Self.FK__Project__projMan__14270015" FromRole="Project" ToRole="Resources" />
+          <NavigationProperty Name="Technology1" Relationship="Self.FK__Project__technol__151B244E" FromRole="Project" ToRole="Technology" />
+        </EntityType>
+        <EntityType Name="Registration">
+          <Key>
+            <PropertyRef Name="regId" />
+          </Key>
+          <Property Name="regId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="regName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="mobile" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="birthDate" Type="DateTime" Precision="0" />
+          <Property Name="address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="gender" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="resId" />
+          </Key>
+          <Property Name="resId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="resName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="resDepartment" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="technologyGroup" Type="Int32" />
+          <Property Name="primaryTechnology" Type="Int32" />
+          <Property Name="secondaryTechnology" Type="Int32" />
+          <Property Name="designation" Type="Int32" />
+          <Property Name="resRole" Type="Int32" />
+          <Property Name="isActive" Type="Boolean" />
+          <NavigationProperty Name="Allocations" Relationship="Self.FK__Allocatio__resId__1EA48E88" FromRole="Resources" ToRole="Allocation" />
+          <NavigationProperty Name="Designation1" Relationship="Self.FK__Resources__desig__7A672E12" FromRole="Resources" ToRole="Designation" />
+          <NavigationProperty Name="Projects" Relationship="Self.FK__Project__projMan__14270015" FromRole="Resources" ToRole="Project" />
+          <NavigationProperty Name="Technology" Relationship="Self.FK__Resources__prima__787EE5A0" FromRole="Resources" ToRole="Technology" />
+          <NavigationProperty Name="Role" Relationship="Self.FK__Resources__resRo__7B5B524B" FromRole="Resources" ToRole="Role" />
+          <NavigationProperty Name="Technology1" Relationship="Self.FK__Resources__secon__797309D9" FromRole="Resources" ToRole="Technology" />
+          <NavigationProperty Name="technologyGroup1" Relationship="Self.FK__Resources__techn__778AC167" FromRole="Resources" ToRole="technologyGroup" />
+          <Property Name="TypeId" Type="Int32" />
+          <NavigationProperty Name="Type" Relationship="liveProjectModel.FK__Resources__TypeI__6FE99F9F" FromRole="Resource" ToRole="Type" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="roleId" />
+          </Key>
+          <Property Name="roleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="roleName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="enable" Type="Boolean" />
+          <NavigationProperty Name="Allocations" Relationship="Self.FK__Allocation__role__1F98B2C1" FromRole="Role" ToRole="Allocation" />
+          <NavigationProperty Name="Resources" Relationship="Self.FK__Resources__resRo__7B5B524B" FromRole="Role" ToRole="Resources" />
+        </EntityType>
+        <EntityType Name="Technology">
+          <Key>
+            <PropertyRef Name="techId" />
+          </Key>
+          <Property Name="techId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="techName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="enable" Type="Boolean" />
+          <NavigationProperty Name="Allocations" Relationship="Self.FK__Allocatio__techn__208CD6FA" FromRole="Technology" ToRole="Allocation" />
+          <NavigationProperty Name="Projects" Relationship="Self.FK__Project__technol__151B244E" FromRole="Technology" ToRole="Project" />
+          <NavigationProperty Name="Resources" Relationship="Self.FK__Resources__prima__787EE5A0" FromRole="Technology" ToRole="Resources" />
+          <NavigationProperty Name="Resources1" Relationship="Self.FK__Resources__secon__797309D9" FromRole="Technology" ToRole="Resources" />
+          <Property Name="techGroupId" Type="Int32" />
+          <NavigationProperty Name="technologyGroup" Relationship="liveProjectModel.FK_Technology_technologyGroup" FromRole="Technology" ToRole="technologyGroup" />
+        </EntityType>
+        <EntityType Name="technologyGroup">
+          <Key>
+            <PropertyRef Name="techGroupId" />
+          </Key>
+          <Property Name="techGroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="techGroupName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="enable" Type="Boolean" />
+          <NavigationProperty Name="Resources" Relationship="Self.FK__Resources__techn__778AC167" FromRole="technologyGroup" ToRole="Resources" />
+          <NavigationProperty Name="Allocations" Relationship="liveProjectModel.FK_Allocation_technologyGroup" FromRole="technologyGroup" ToRole="Allocation" />
+          <NavigationProperty Name="Technologies" Relationship="liveProjectModel.FK_Technology_technologyGroup" FromRole="technologyGroup" ToRole="Technology" />
+        </EntityType>
+        <Association Name="FK__Allocatio__projI__1DB06A4F">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="projId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="projId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocatio__resId__1EA48E88">
+          <End Role="Resources" Type="Self.Resource" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="resId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="resId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocatio__techn__208CD6FA">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="technology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allocation__role__1F98B2C1">
+          <End Role="Role" Type="Self.Role" Multiplicity="0..1" />
+          <End Role="Allocation" Type="Self.Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="roleId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__desig__7A672E12">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="designId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="designation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__projMan__14270015">
+          <End Role="Resources" Type="Self.Resource" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="resId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="projManager" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__technol__151B244E">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="technology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__prima__787EE5A0">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="primaryTechnology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__resRo__7B5B524B">
+          <End Role="Role" Type="Self.Role" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="roleId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="resRole" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__secon__797309D9">
+          <End Role="Technology" Type="Self.Technology" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Technology">
+              <PropertyRef Name="techId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="secondaryTechnology" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Resources__techn__778AC167">
+          <End Role="technologyGroup" Type="Self.technologyGroup" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="technologyGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="liveProjectEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Allocations" EntityType="Self.Allocation" />
+          <EntitySet Name="Designations" EntityType="Self.Designation" />
+          <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="Registrations" EntityType="Self.Registration" />
+          <EntitySet Name="Resources" EntityType="Self.Resource" />
+          <EntitySet Name="Roles" EntityType="Self.Role" />
+          <EntitySet Name="Technologies" EntityType="Self.Technology" />
+          <EntitySet Name="technologyGroups" EntityType="Self.technologyGroup" />
+          <AssociationSet Name="FK__Allocatio__projI__1DB06A4F" Association="Self.FK__Allocatio__projI__1DB06A4F">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="Allocation" EntitySet="Allocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocatio__resId__1EA48E88" Association="Self.FK__Allocatio__resId__1EA48E88">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Allocation" EntitySet="Allocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocatio__techn__208CD6FA" Association="Self.FK__Allocatio__techn__208CD6FA">
+            <End Role="Technology" EntitySet="Technologies" />
+            <End Role="Allocation" EntitySet="Allocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allocation__role__1F98B2C1" Association="Self.FK__Allocation__role__1F98B2C1">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="Allocation" EntitySet="Allocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__desig__7A672E12" Association="Self.FK__Resources__desig__7A672E12">
+            <End Role="Designation" EntitySet="Designations" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Project__projMan__14270015" Association="Self.FK__Project__projMan__14270015">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Project" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Project__technol__151B244E" Association="Self.FK__Project__technol__151B244E">
+            <End Role="Technology" EntitySet="Technologies" />
+            <End Role="Project" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__prima__787EE5A0" Association="Self.FK__Resources__prima__787EE5A0">
+            <End Role="Technology" EntitySet="Technologies" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__resRo__7B5B524B" Association="Self.FK__Resources__resRo__7B5B524B">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__secon__797309D9" Association="Self.FK__Resources__secon__797309D9">
+            <End Role="Technology" EntitySet="Technologies" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Resources__techn__778AC167" Association="Self.FK__Resources__techn__778AC167">
+            <End Role="technologyGroup" EntitySet="technologyGroups" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Allocation_technologyGroup" Association="liveProjectModel.FK_Allocation_technologyGroup">
+            <End Role="technologyGroup" EntitySet="technologyGroups" />
+            <End Role="Allocation" EntitySet="Allocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Technology_technologyGroup" Association="liveProjectModel.FK_Technology_technologyGroup">
+            <End Role="technologyGroup" EntitySet="technologyGroups" />
+            <End Role="Technology" EntitySet="Technologies" />
+          </AssociationSet>
+          <EntitySet Name="Types" EntityType="liveProjectModel.Type" />
+          <AssociationSet Name="FK__Resources__TypeI__6FE99F9F" Association="liveProjectModel.FK__Resources__TypeI__6FE99F9F">
+            <End Role="Type" EntitySet="Types" />
+            <End Role="Resource" EntitySet="Resources" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="FK_Allocation_technologyGroup">
+          <End Type="liveProjectModel.technologyGroup" Role="technologyGroup" Multiplicity="0..1" />
+          <End Type="liveProjectModel.Allocation" Role="Allocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Allocation">
+              <PropertyRef Name="techGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Technology_technologyGroup">
+          <End Type="liveProjectModel.technologyGroup" Role="technologyGroup" Multiplicity="0..1" />
+          <End Type="liveProjectModel.Technology" Role="Technology" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="technologyGroup">
+              <PropertyRef Name="techGroupId" />
+            </Principal>
+            <Dependent Role="Technology">
+              <PropertyRef Name="techGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Type">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Hours" Type="Double" />
+          <NavigationProperty Name="Resources" Relationship="liveProjectModel.FK__Resources__TypeI__6FE99F9F" FromRole="Type" ToRole="Resource" />
+        </EntityType>
+        <Association Name="FK__Resources__TypeI__6FE99F9F">
+          <End Type="liveProjectModel.Type" Role="Type" Multiplicity="0..1" />
+          <End Type="liveProjectModel.Resource" Role="Resource" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Type">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resource">
+              <PropertyRef Name="TypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="liveProjectModelStoreContainer" CdmEntityContainer="liveProjectEntities">
+          <EntitySetMapping Name="Allocations">
+            <EntityTypeMapping TypeName="liveProjectModel.Allocation">
+              <MappingFragment StoreEntitySet="Allocation">
+                <ScalarProperty Name="techGroup" ColumnName="techGroup" />
+                <ScalarProperty Name="allocId" ColumnName="allocId" />
+                <ScalarProperty Name="projId" ColumnName="projId" />
+                <ScalarProperty Name="resId" ColumnName="resId" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
+                <ScalarProperty Name="allocation1" ColumnName="allocation" />
+                <ScalarProperty Name="isBillable" ColumnName="isBillable" />
+                <ScalarProperty Name="role" ColumnName="role" />
+                <ScalarProperty Name="technology" ColumnName="technology" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Designations">
+            <EntityTypeMapping TypeName="liveProjectModel.Designation">
+              <MappingFragment StoreEntitySet="Designation">
+                <ScalarProperty Name="designId" ColumnName="designId" />
+                <ScalarProperty Name="desigName" ColumnName="desigName" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="enable" ColumnName="enable" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="liveProjectModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="projId" ColumnName="projId" />
+                <ScalarProperty Name="projName" ColumnName="projName" />
+                <ScalarProperty Name="projManager" ColumnName="projManager" />
+                <ScalarProperty Name="technology" ColumnName="technology" />
+                <ScalarProperty Name="startdate" ColumnName="startdate" />
+                <ScalarProperty Name="enddate" ColumnName="enddate" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Registrations">
+            <EntityTypeMapping TypeName="liveProjectModel.Registration">
+              <MappingFragment StoreEntitySet="Registration">
+                <ScalarProperty Name="regId" ColumnName="regId" />
+                <ScalarProperty Name="regName" ColumnName="regName" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="mobile" ColumnName="mobile" />
+                <ScalarProperty Name="birthDate" ColumnName="birthDate" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="gender" ColumnName="gender" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resources">
+            <EntityTypeMapping TypeName="liveProjectModel.Resource">
+              <MappingFragment StoreEntitySet="Resources">
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="resId" ColumnName="resId" />
+                <ScalarProperty Name="resName" ColumnName="resName" />
+                <ScalarProperty Name="resDepartment" ColumnName="resDepartment" />
+                <ScalarProperty Name="technologyGroup" ColumnName="technologyGroup" />
+                <ScalarProperty Name="primaryTechnology" ColumnName="primaryTechnology" />
+                <ScalarProperty Name="secondaryTechnology" ColumnName="secondaryTechnology" />
+                <ScalarProperty Name="designation" ColumnName="designation" />
+                <ScalarProperty Name="resRole" ColumnName="resRole" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="liveProjectModel.Role">
+              <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="roleId" ColumnName="roleId" />
+                <ScalarProperty Name="roleName" ColumnName="roleName" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="enable" ColumnName="enable" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Technologies">
+            <EntityTypeMapping TypeName="liveProjectModel.Technology">
+              <MappingFragment StoreEntitySet="Technology">
+                <ScalarProperty Name="techGroupId" ColumnName="techGroupId" />
+                <ScalarProperty Name="techId" ColumnName="techId" />
+                <ScalarProperty Name="techName" ColumnName="techName" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="enable" ColumnName="enable" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="technologyGroups">
+            <EntityTypeMapping TypeName="liveProjectModel.technologyGroup">
+              <MappingFragment StoreEntitySet="technologyGroup">
+                <ScalarProperty Name="techGroupId" ColumnName="techGroupId" />
+                <ScalarProperty Name="techGroupName" ColumnName="techGroupName" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="enable" ColumnName="enable" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Types">
+            <EntityTypeMapping TypeName="liveProjectModel.Type">
+              <MappingFragment StoreEntitySet="Type">
+                <ScalarProperty Name="Hours" ColumnName="Hours" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

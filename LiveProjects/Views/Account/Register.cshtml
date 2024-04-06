@@ -1,0 +1,124 @@
+﻿@model LiveProjects.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+   
+    @using (Html.BeginForm("Register","Account",FormMethod.Post,new {role = "form"}))
+    {
+        @Html.AntiForgeryToken()
+        <section class="vh-100 gradient-custom">
+            <div class="container py-5 h-100">
+                <div class="row justify-content-center align-items-center h-100">
+                    <div class="col-12 col-lg-9 col-xl-7">
+                        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+                            <div class="card-body p-4 p-md-5">
+                                <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center"> Registration Form </h3>
+
+                                <div class="form-horizontal">
+
+                                    
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4">
+
+                                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                                <div class="form-outline fw-bold">
+                                                    @Html.LabelFor(model => model.regName)<label class="text-danger">*</label>
+                                                    @Html.EditorFor(model => model.regName, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter your name" } })
+                                                    @Html.ValidationMessageFor(model => model.regName, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4 fw-bold">
+                                                @Html.LabelFor(model => model.Email)<label class="text-danger">*</label>
+                                                <div class="form-outline ">
+                                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter your email" } })
+                                                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            @{
+                                                List<SelectListItem> data = ViewBag.Categorylist;
+                                            }
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4 fw-bold">
+                                                @Html.LabelFor(model => model.Password)<label class="text-danger">*</label>
+                                                <div class="form-outline ">
+                                                    @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Enter your password" })
+                                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4 fw-bold">
+                                                @Html.LabelFor(model => model.mobile)<label class="text-danger">*</label>
+                                                <div class="form-outline ">
+                                                    @Html.EditorFor(model => model.mobile, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter your mobile no." } })
+                                                    @Html.ValidationMessageFor(model => model.mobile, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4 fw-bold">
+                                                @Html.LabelFor(model => model.birthDate, htmlAttributes: new { @class = "control-label " })
+                                                <div class="form-outline ">
+                                                    @Html.EditorFor(model => model.birthDate, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter your birth date" } })
+                                                    @Html.ValidationMessageFor(model => model.birthDate, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4  fw-bold">
+                                                @Html.LabelFor(model => model.address, htmlAttributes: new { @class = "control-label " })
+                                                <div class="form-outline">
+                                                    @Html.TextAreaFor(model => model.address, new { @class = "form-control", placeholder = "Enter your address" })
+                                                    @Html.ValidationMessageFor(model => model.address, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-normal fw-bold ">
+
+                                            @Html.LabelFor(model => model.gender)<label class="text-danger">*</label>
+
+                                        </div>
+
+                                        @Html.RadioButtonFor(model => model.gender, "Female")
+
+                                        @Html.Label("Female")
+                                        <span class="fw-normal ms-2">
+                                            @Html.RadioButtonFor(model => model.gender, "Male")
+                                            @Html.Label("Male")
+                                        </span>
+                                        <div class="fw-normal fw-bold ">
+                                            @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <br />
+
+
+                                        <div class="form-group">
+                                            <div class="col-md-offset-2 col-md-10">
+                                                <input type="submit" value="Register" class="btn btn-primary btn-lg" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <label>Already have an account?</label>
+                                        <div style="text-decoration:none">
+                                            @Html.ActionLink("Log In", "Login")
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

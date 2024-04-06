@@ -1,0 +1,151 @@
+﻿@{
+    bool IsloggedIn = true;
+    if (string.IsNullOrEmpty(User.Identity.Name))
+    {
+        IsloggedIn = false;
+    }
+    var name = User.Identity.Name;
+}
+
+@if (IsloggedIn)
+{
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+<link href="~/Content/css/datatablestyle.min.css" rel="stylesheet" />
+    <link href="~/Content/css/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <style>
+        .nav .nav-link.active {
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: underline !important; 
+        }
+
+        i {
+            font-size: 17px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+
+        <a class="navbar-brand ps-3" href="../Admin/Dashboard">Sigma Solve Project</a>
+
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        </form>
+
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">@name</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <a class="dropdown-item" href="@Url.Content("~/Account/Logout")">Logout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <a class="nav-link" href="@Url.Content("~/Home/Index")">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt" style="font-size:17px;"></i></div>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/Resource/GetAllResource")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-people"></i></div>
+                            Resource
+                        </a>
+
+                        <a class="nav-link" href="@Url.Content("~/Project/GetAllProject")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-card-checklist"></i></div>
+                            Project
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/Allocation/Allocation")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-boxes"></i></div>
+                            Allocation
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/Report/GetAllReport")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-calendar2-range"></i></div>
+                            Report
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/Report/GethourlyReport")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-hourglass-split"></i></div>
+                            HourlyReport
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    @RenderBody()
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Sigma Solve</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8/dist/sweetalert2.all.min.js"></script>
+    <script src="~/Scripts/datatables-simple-demo.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/Content/js/scripts.js"></script>
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+    @RenderSection("scripts", required: false)
+    <script>
+     
+        $(function () {
+            try {
+                var currentPageUrl = window.location.href;
+
+                $('.nav-link').each(function () {
+                    var menuItemUrl = $(this).attr('href');
+                    if (currentPageUrl === menuItemUrl) {
+                        $(this).addClass('active');
+                    }
+                });
+            } catch (error) {
+                console.error("An error occurred in JavaScript:", error);
+            }
+        });
+    </script>
+
+</body>
+</html>
+}
+

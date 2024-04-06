@@ -1,0 +1,85 @@
+﻿@using LiveProjects.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row justify-content-center align-items-center h-100">
+                <div class="col-12 col-lg-9 col-xl-7">
+                    <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+                        <div class="card-body p-4 p-md-5">
+                            <h3 class=" text-center">Login</h3>
+                            <div class="form-horizontal">
+                                <hr />
+                                <form id="loginForm">
+                                    <div class="row">
+                                        <div class="col-md-8 fw-bold">
+                                            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="form-outline ">
+                                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control mt-2", placeholder = "Enter your email" } })
+                                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-9  fw-bold mt-3">
+                                            @Html.LabelFor(model => model.Password)
+                                            <div class="form-outline  " id="password">
+                                                @Html.PasswordFor(model => model.Password, new { @class = "form-control mt-2", placeholder = "Enter your password", id = "myInput" })
+                                                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })<br />
+                                                <input type="checkbox" onclick="myFunction()">
+                                                <span>Show Password</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <div class="form-group">
+                                        <div class="col-md-offset-8 col-md-10">
+                                            <input type="submit" value="Login" id="loginbtn" class="btn btn-primary btn-lg" />
+                                        </div>
+                                    </div><br />
+
+                                    <p>
+                                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                                    </p>
+
+
+                                    <div>
+                                        @if (ViewBag.ErrorMessage != null)
+                                        {
+                                            <div class="alert alert-danger">
+                                                @ViewBag.ErrorMessage
+                                            </div>
+                                        }
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myInput");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+

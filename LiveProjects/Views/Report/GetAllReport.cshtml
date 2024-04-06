@@ -1,0 +1,329 @@
+﻿@model LiveProjects.Models.Pagination.AllocationPagination
+@{
+    ViewBag.Title = "GetAllReport";
+}
+<link href="~/css/Loader.css" rel="stylesheet" />
+<style>
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination a,
+        .pagination span {
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #007bff;
+            padding: 8px 16px;
+            text-decoration: none;
+            cursor: pointer;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+
+         .pagination .active a,
+         .pagination a:hover {
+              background-color: #007bff;
+              color: #fff;
+              border: 1px solid #007bff;
+         }
+
+        .pagination .disabled a,
+        .pagination .disabled span {
+            color: #ddd;
+            pointer-events: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+</style>
+<h2>Report</h2>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container border border-2 border-secondary rounded-2 w-100 mt-3">
+        <div class="row ms-5">
+            <div class="col-md-6">
+
+                <div class="form-group fw-bold mt-4">
+                    <label for="datepicker">Start Date:</label><label class="text-danger">*</label>
+                    <input type="date" id="Startdate" name="Startdate" class="form-control mt-1" required>
+                </div>
+
+                <div class="form-group fw-bold" style="padding-top:20px">
+                    <label>Resource</label>
+                    <select class="form-control mt-1 mb-4" id="resource" name="resource">
+                        <option value="-1">Select Resource</option>
+                    </select>
+                </div>
+
+                <div class="form-group fw-bold">
+                    <label>Project Name</label>
+                    <select class="form-control" id="project" name="project">
+                        <option value="-1">Select Project</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group fw-bold mt-4">
+                    <label for="datepicker">End Date:</label><label class="text-danger">*</label>
+                    <input type="date" id="Enddate" name="Enddate" class="form-control mt-1" required>
+                </div>
+
+                <div class="form-group fw-bold" style="padding-top:20px">
+                    <label>Technology Group</label>
+                    <select class="form-control mt-1" id="technologyGroup" name="technologyGroup">
+                        <option value="-1">Select Technology</option>
+                    </select>
+                    <div id="techGroupValidation"></div>
+                </div>
+
+                <div class="form-group fw-bold" style="padding-top:20px">
+                    <label>Technology</label>
+                    <select class="form-control mt-1" id="technology" name="technology">
+                        <option value="-1">Select Technology </option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div style="display:flex;margin-left:60px">
+            <div class="form-group">
+                <input type="button" id="searchButton" value="Search" class="btn btn-primary mt-3 mb-3" />
+            </div>
+        </div>
+    </div>
+}
+
+<center>
+    <div class="dot-spinner">
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+    </div>
+</center>
+
+<table class="table table-bordered text-center mt-5" id="datatablesSimple" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Project Name</th>
+            <th>Resource Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Allocation%</th>
+            <th>Billable</th>
+            <th>Role</th>
+            <th>Technology Group</th>
+            <th>Technology</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="MyTbody">
+    </tbody>
+
+</table>
+
+
+<ul class="pagination">
+    <li>
+        <a href="#" id="prevPageButton">Previous</a>
+    </li>
+
+    <li>
+        <a href="#" id="showPageNumber"></a>
+    </li>
+
+    <li>
+        <a href="#" id="nextPageButton">Next</a>
+    </li>
+</ul>
+
+@section Scripts {
+    <script type="text/javascript">
+        var page = 1;
+        var pageSize = 10;
+        $(document).ready(function () {
+            getGroupTechnology(), getTechnologies(), getProjectes(), getResource1();
+            $('thead').hide();
+            $('.dot-spinner').hide();
+            $('#showPageNumber').hide();
+            $('#prevPageButton').hide();
+            $('#nextPageButton').hide();
+        });
+
+        function getGroupTechnology() {
+            $.ajax({
+                type: "GET",
+                url: "/Report/getGroupTechnology",
+                success: function (data) {
+                    var s = '<option value="-1">Select Technology Group</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].techGroupId + '">' + data[i].techGroupName + '</option>';
+                    }
+                    $("#technologyGroup").html(s);
+                }
+            });
+        }
+
+        function getTechnologies() {
+            $.ajax({
+                type: "GET",
+                url: "/Report/getTechnologies",
+                success: function (data) {
+                    var s = '<option value="-1">Select Technology</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].techId + '">' + data[i].techName + '</option>';
+                    }
+                    $("#technology").html(s);
+                }
+            });
+        }
+
+        function getProjectes() {
+            $.ajax({
+                type: "GET",
+                url: "/Report/getProjectes",
+                success: function (data) {
+                    var s = '<option value="-1">Select Project</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].projId + '">' + data[i].projName + '</option>';
+                    }
+                    $("#project").html(s);
+                }
+            });
+        }
+
+        function getResource1() {
+            $.ajax({
+                type: "GET",
+                url: "/Report/getResource1",
+                success: function (data) {
+                    var s = '<option value="-1">Select Resource</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].resId + '">' + data[i].resName + '</option>';
+                    }
+                    $("#resource").html(s);
+                }
+            });
+        }
+
+        function performSearch() {
+            var StartDate = $('#Startdate').val();
+            var EndDate = $('#Enddate').val();
+            var Resource = $('#resource').val();
+            var Project = $('#project').val();
+            var TechnologyGroup = $('#technologyGroup').val();
+            var Technology = $('#technology').val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/Report/SearchReport',
+                dataType: 'json',
+                data: {
+                    StartDate: StartDate,
+                    Enddate: EndDate,
+                    resourceId: Resource,
+                    ProjectId: Project,
+                    techGroupId: TechnologyGroup,
+                    techid: Technology,
+                    page: page,
+                    pageSize: pageSize
+                },
+                traditional: true,
+                success: function (result) {
+                    $('.dot-spinner').hide();
+                    //console.log(result);
+                    $('thead').show();
+                    var tbody = $('#MyTbody');
+                    tbody.empty();
+
+                    if (result.List.length === 0) {
+                        var row = $('<tr>').append($('<td colspan="10">').text('No data found.'));
+                        tbody.append(row);
+                        $('#showPageNumber').hide();
+                        $('#prevPageButton').hide();
+                        $('#nextPageButton').hide();
+                        return;
+                    }
+
+                    $.each(result.List, function (index, item) {
+                        var row = $('<tr>');
+                        row.append('<td>' + item.Project.projName + '</td>');
+                        row.append('<td>' + item.Resource.resName + '</td>');
+                        var startDate = new Date(parseInt(item.startDate.replace(/\/Date\((-?\d+)\)\//, '$1')));
+                        row.append('<td>' + startDate.toLocaleDateString() + '</td>');
+                        var endDate = new Date(parseInt(item.endDate.replace(/\/Date\((-?\d+)\)\//, '$1')));
+                        row.append('<td>' + endDate.toLocaleDateString() + '</td>');
+                        row.append('<td>' + item.allocation1 + '</td>');
+                        row.append('<td><input type="checkbox"' + (item.isBillable ? ' checked' : 'unchecked') + ' disabled></td>');
+                        row.append('<td>' + item.Role1.roleName + '</td>');
+                        row.append('<td>' + item.technologyGroup.techGroupName + '</td>');
+                        row.append('<td>' + item.Technology1.techName + '</td>');
+                        row.append('<td>' +
+                            '<input type="button" value="Edit" class="btn btn-outline-info" onclick="editAllocation(' + item.allocId + ')" /> ' + '</td>');
+                        tbody.append(row);
+                    });
+
+                    $('#showPageNumber').show();
+                    $('#showPageNumber').html(page);
+
+                    if (result.Pager.CurrentPage > 1) {
+                        $('#prevPageButton').show();
+                    } else {
+                        $('#prevPageButton').hide();
+                    }
+
+                    if (result.Pager.CurrentPage < result.Pager.TotalPages) {
+                        $('#nextPageButton').show();
+                    }
+                    else {
+                        $('#nextPageButton').hide();
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $('#searchButton').click(function () {
+            var Startdate = $('#Startdate').val();
+            var Enddate = $("#Enddate").val();
+            if (Startdate == "" || Enddate == "") {
+                alert("Startdate and Enddate both field is required.");
+                return false;
+            } else {
+                $('.dot-spinner').show();
+                performSearch();
+                return true;
+            }
+        });
+
+        function editAllocation(allocId) {
+            window.location.href = '/Allocation/AllocationEdit/' + allocId;
+        }
+
+        $('#prevPageButton').click(function () {
+            if (page > 1) {
+                page--;
+                performSearch();
+            }
+        });
+
+        $('#nextPageButton').click(function () {
+            page++;
+            performSearch();
+        });
+
+    </script>
+}
