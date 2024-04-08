@@ -93,6 +93,7 @@
     }
 
     .chosen-choices {
+        background-color:#212121 !important;
         border-radius: 3px !important;
         min-height: 40px;
     }
@@ -147,13 +148,15 @@
         color: black !important;
         background: #9ddef9 !important;
     }
+
+
 </style>
 
 <div class="card mb-4 mt-4">
     <div class="card-header">
         <i class="bi bi-boxes me-1"></i>
         <span class="fs-5 me-3">Allocation</span>
-        <select data-placeholder="Search Resource Name" multiple class="chosen-select" name="test">
+        <select data-placeholder="Search Resource Name" multiple class="chosen-select dark-background" name="test">
             <option value=""></option>
             @foreach (var option in (IEnumerable<SelectListItem>)ViewBag.resId)
             {
@@ -199,7 +202,7 @@
         <td>
             <input type="button" value="Edit" class="btn btn-outline-primary" onclick="location.href='@Url.Action("AllocationEdit", "Allocation", new { id = item.allocId })'" />
 
-            <a href="#" onclick="Delete(@item.allocId)" class="btn btn-outline-danger ms-1">Delete</a>
+            <a href="#" onclick="Delete(@item.allocId)" class="btn btn-outline-danger m-1">Delete</a>
         </td>
     </tr>
 }
@@ -268,7 +271,13 @@
                     } 
                     
                     $.each(data.data, function (index, item) {
-                        var row = $('<tr>');
+                        if (localStorage.getItem('darkMode') === 'enabled') {
+                            var row = $('<tr>').css('color', 'white');
+                        }
+                        else {
+                            var row = $('<tr>').css('color', 'black');
+                        }
+                        
                         row.append('<td>' + item.Project.projName + '</td>');
                         row.append('<td>' + item.Resource.resName + '</td>');
                         var startDate = new Date(parseInt(item.startDate.replace(/\/Date\((-?\d+)\)\//, '$1')));

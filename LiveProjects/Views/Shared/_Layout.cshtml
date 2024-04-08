@@ -65,7 +65,7 @@
             position: relative;
             display: inline-block;
             width: 3.2em;
-            height: 1.9em;
+            height: 1.8em;
         }
 
             .switch input {
@@ -87,8 +87,8 @@
             .slider:before {
                 position: absolute;
                 content: "";
-                height: 1.4em;
-                width: 1.4em;
+                height: 1.2em;
+                width: 1.2em;
                 right: 0.3em;
                 bottom: 0.3em;
                 transform: translateX(150%);
@@ -100,8 +100,8 @@
             .slider:after {
                 position: absolute;
                 content: "";
-                height: 1.4em;
-                width: 1.4em;
+                height: 1.2em;
+                width: 1.2em;
                 left: 0.3em;
                 bottom: 0.3em;
                 background-color: #f7a708;
@@ -121,6 +121,9 @@
             transform: translateX(-150%);
         }
 
+        .footer {
+            background-color:#212121 !important;
+        }
     </style>
 </head>
 
@@ -194,7 +197,7 @@
                     @RenderBody()
                 </div>
             </main>
-            <footer class="py-4 bg-light mt-auto">
+            @*<footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Copyright &copy; Sigma Solve</div>
@@ -205,7 +208,7 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer>*@
         </div>
     </div>
 
@@ -240,6 +243,8 @@
                 $('.card').addClass('card-dark');   
                 $('th').addClass('card-body-dark');
                 $('td').addClass('card-body-dark');
+                $('footer').addClass('card-dark');
+                $('tr').css('color','white');
             }
 
             function disableDarkMode() {
@@ -247,7 +252,8 @@
                 $('#darkModeToggle').prop('checked', false);
                 $('.card').removeClass('card-dark');
                 $('th').removeClass ('card-body-dark');
-                $('td').removeClass ('card-body-dark');
+                $('td').removeClass('card-body-dark');
+                $('tr').css('color', 'black');
             }
 
             $('#darkModeToggle').change(function () {

@@ -248,7 +248,14 @@
                     tbody.empty();
 
                     if (result.List.length === 0) {
-                        var row = $('<tr>').append($('<td colspan="10">').text('No data found.'));
+                        if (localStorage.getItem('darkMode') === 'enabled') {
+                            var row = $('<tr>').css('color', 'white');
+                        }
+                        else {
+                            var row = $('<tr>').css('color', 'black');
+                        }
+
+                        $(row).append($('<td colspan="10">').text('No data found.'));
                         tbody.append(row);
                         $('#showPageNumber').hide();
                         $('#prevPageButton').hide();
@@ -257,7 +264,12 @@
                     }
 
                     $.each(result.List, function (index, item) {
-                        var row = $('<tr>');
+                        if (localStorage.getItem('darkMode') === 'enabled') {
+                            var row = $('<tr>').css('color', 'white');
+                        }
+                        else {
+                            var row = $('<tr>').css('color', 'black');
+                        }
                         row.append('<td>' + item.Project.projName + '</td>');
                         row.append('<td>' + item.Resource.resName + '</td>');
                         var startDate = new Date(parseInt(item.startDate.replace(/\/Date\((-?\d+)\)\//, '$1')));
