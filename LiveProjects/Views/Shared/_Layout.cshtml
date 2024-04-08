@@ -25,11 +25,17 @@
 
 
     <style>
-        .nav .nav-link.active {
-            font-weight: bold;
-            color: #007bff;
-            text-decoration: underline !important; 
+        .nav .nav-link {
+            text-decoration: none;
+            color: #333; /* Default color */
+            transition: color 0.3s ease, font-weight 0.3s ease; /* Transition for color and font-weight */
         }
+
+            .nav .nav-link.active {
+                font-weight: bold;
+                color: #007bff; /* Active color */
+            }
+
 
         i {
             font-size: 17px;
@@ -66,7 +72,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <div class="sb-sidenav-menu-heading"><hr /></div>
                         <a class="nav-link" href="@Url.Content("~/Home/Index")">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt" style="font-size:17px;"></i></div>
                             Dashboard
@@ -128,21 +134,15 @@
     <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     @RenderSection("scripts", required: false)
     <script>
-     
-        $(function () {
-            try {
-                var currentPageUrl = window.location.href;
+        var currentPageUrl = window.location.href;
+        var navLinks = document.querySelectorAll('.nav-link');
 
-                $('.nav-link').each(function () {
-                    var menuItemUrl = $(this).attr('href');
-                    if (currentPageUrl === menuItemUrl) {
-                        $(this).addClass('active');
-                    }
-                });
-            } catch (error) {
-                console.error("An error occurred in JavaScript:", error);
+        navLinks.forEach(function (link) {
+            if (link.href === currentPageUrl) {
+                link.classList.add('active');
             }
         });
+        
     </script>
 
 </body>
