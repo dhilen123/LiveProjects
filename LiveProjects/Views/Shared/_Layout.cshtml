@@ -25,6 +25,25 @@
 
 
     <style>
+        body {
+            background-color: #ffffff; 
+            color: #000000; 
+        }
+
+        body.dark-mode {
+            background-color: #333333; 
+            color: #ffffff; 
+        }
+
+        .card-body-dark {
+            color: #ffffff;
+        }
+
+        .card-dark {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
         .nav .nav-link {
             text-decoration: none;
             color: #333;
@@ -38,6 +57,68 @@
 
         i {
             font-size: 17px;
+        }
+
+
+        .switch {
+            font-size: 14px;
+            position: relative;
+            display: inline-block;
+            width: 3.2em;
+            height: 1.9em;
+        }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 1.4em;
+                width: 1.4em;
+                right: 0.3em;
+                bottom: 0.3em;
+                transform: translateX(150%);
+                background-color: #000000;
+                border-radius: inherit;
+                transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+            }
+
+            .slider:after {
+                position: absolute;
+                content: "";
+                height: 1.4em;
+                width: 1.4em;
+                left: 0.3em;
+                bottom: 0.3em;
+                background-color: #f7a708;
+                border-radius: inherit;
+                transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+            }
+
+        .switch input:focus + .slider {
+            box-shadow: 0 0 1px #59d102;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateY(0);
+        }
+
+        .switch input:checked + .slider::after {
+            transform: translateX(-150%);
         }
 
     </style>
@@ -63,6 +144,12 @@
                         <a class="dropdown-item" href="@Url.Content("~/Account/Logout")">Logout</a>
                     </li>
                 </ul>
+            </li>
+            <li class="nav-item p-1 ps-2">
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
             </li>
         </ul>
     </nav>
@@ -141,6 +228,40 @@
                 link.classList.add('active');
             }
         });
+
+        $(document).ready(function () {
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                enableDarkMode();
+            }
+
+            function enableDarkMode() {
+                $('body').addClass('dark-mode');
+                $('#darkModeToggle').prop('checked', true);
+                $('.card').addClass('card-dark');   
+                $('th').addClass('card-body-dark');
+                $('td').addClass('card-body-dark');
+            }
+
+            function disableDarkMode() {
+                $('body').removeClass('dark-mode');
+                $('#darkModeToggle').prop('checked', false);
+                $('.card').removeClass('card-dark');
+                $('th').removeClass ('card-body-dark');
+                $('td').removeClass ('card-body-dark');
+            }
+
+            $('#darkModeToggle').change(function () {
+                if ($(this).is(':checked')) {
+                    enableDarkMode();
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    disableDarkMode();
+                    localStorage.setItem('darkMode', null);
+                }
+            });
+        });
+
+
         
     </script>
 
