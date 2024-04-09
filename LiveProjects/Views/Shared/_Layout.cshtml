@@ -60,70 +60,64 @@
         }
 
 
+        /* The switch - the box around the slider */
         .switch {
-            font-size: 14px;
+            display: block;
+            --width-of-switch: 3em;
+            --height-of-switch: 1.5em;
+            /* size of sliding icon -- sun and moon */
+            --size-of-icon: 1.2em;
+            /* it is like a inline-padding of switch */
+            --slider-offset: 0.3em;
             position: relative;
-            display: inline-block;
-            width: 3.2em;
-            height: 1.8em;
+            width: var(--width-of-switch);
+            height: var(--height-of-switch);
         }
 
+            /* Hide default HTML checkbox */
             .switch input {
                 opacity: 0;
                 width: 0;
                 height: 0;
             }
 
+        /* The slider */
         .slider {
             position: absolute;
             cursor: pointer;
-            inset: 0;
-            background: white;
-            border-radius: 50px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f4f4f5;
+            transition: .4s;
+            border-radius: 30px;
         }
 
             .slider:before {
                 position: absolute;
                 content: "";
-                height: 1.2em;
-                width: 1.2em;
-                right: 0.3em;
-                bottom: 0.3em;
-                transform: translateX(150%);
-                background-color: #000000;
-                border-radius: inherit;
-                transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+                height: var(--size-of-icon,1.4em);
+                width: var(--size-of-icon,1.4em);
+                border-radius: 20px;
+                left: var(--slider-offset,0.3em);
+                top: 50%;
+                transform: translateY(-50%);
+                background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
+                ;
+                transition: .4s;
             }
 
-            .slider:after {
-                position: absolute;
-                content: "";
-                height: 1.2em;
-                width: 1.2em;
-                left: 0.3em;
-                bottom: 0.3em;
-                background-color: #f7a708;
-                border-radius: inherit;
-                transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        input:checked + .slider {
+            background-color: #303136;
+        }
+
+            input:checked + .slider:before {
+                left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
+                background: #303136;
+                /* change the value of second inset in box-shadow to change the angle and direction of the moon  */
+                box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
             }
-
-        .switch input:focus + .slider {
-            box-shadow: 0 0 1px #59d102;
-        }
-
-        .switch input:checked + .slider:before {
-            transform: translateY(0);
-        }
-
-        .switch input:checked + .slider::after {
-            transform: translateX(-150%);
-        }
-
-        .footer {
-            background-color:#212121 !important;
-        }
     </style>
 </head>
 
@@ -148,7 +142,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item p-1 ps-2">
+            <li class="nav-item pt-2 ps-2">
                 <label class="switch">
                     <input type="checkbox" id="darkModeToggle">
                     <span class="slider"></span>
@@ -197,18 +191,6 @@
                     @RenderBody()
                 </div>
             </main>
-            @*<footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Sigma Solve</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>*@
         </div>
     </div>
 
@@ -232,37 +214,41 @@
             }
         });
 
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
         $(document).ready(function () {
-            if (localStorage.getItem('darkMode') === 'enabled') {
+            var themeValue = getCookie("themeValue");
+            if (themeValue === "dark-theme") {
                 enableDarkMode();
             }
 
             function enableDarkMode() {
                 $('body').addClass('dark-mode');
                 $('#darkModeToggle').prop('checked', true);
-                $('.card').addClass('card-dark');   
-                $('th').addClass('card-body-dark');
-                $('td').addClass('card-body-dark');
+                $('.card').addClass('card-dark');
+                $('th, td').addClass('card-body-dark');
                 $('footer').addClass('card-dark');
-                $('tr').css('color','white');
+                $('tr').css('color', 'white');
             }
+            
 
-            function disableDarkMode() {
-                $('body').removeClass('dark-mode');
-                $('#darkModeToggle').prop('checked', false);
-                $('.card').removeClass('card-dark');
-                $('th').removeClass ('card-body-dark');
-                $('td').removeClass('card-body-dark');
-                $('tr').css('color', 'black');
-            }
-
+            
             $('#darkModeToggle').change(function () {
                 if ($(this).is(':checked')) {
+                    document.cookie = "themeValue=dark-theme; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+
                     enableDarkMode();
-                    localStorage.setItem('darkMode', 'enabled');
                 } else {
-                    disableDarkMode();
-                    localStorage.setItem('darkMode', null);
+                    document.cookie = "themeValue=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+                    $('body').removeClass('dark-mode');
+                    $('#darkModeToggle').prop('checked', false);
+                    $('.card').removeClass('card-dark');
+                    $('th, td').removeClass('card-body-dark'); 
+                    $('tr').css('color', 'black'); 
                 }
             });
         });
