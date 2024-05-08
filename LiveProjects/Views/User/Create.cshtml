@@ -1,0 +1,533 @@
+﻿@{
+    ViewBag.Title = "Create";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .timercard {
+        width: 15rem;
+        height: 4.5rem;
+        border-radius: 20px;
+        background: #e0e0e0;
+        box-shadow: 15px 15px 30px #bebebe, -10px -10px 30px #ffffff;
+        transition: 400ms;
+    }
+
+        .timercard:hover {
+            transform: scale(1.1, 1.1);
+        }
+
+</style>
+
+<div class="container d-flex flex-column align-items-center justify-content-center mt-2 mb-3">
+    <h5>Today's work hours</h5>
+    <div class="row d-flex mb-2">
+        <div class="card align-self-center justify-content-center align-items-center timercard">
+            <h1 id="time"></h1>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    <center>
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <div class="" id="punchindiv" style="display:none;">
+                    <input type="button" name="Punch In" id="punchinbtn" value="Punch In" class="btn btn-info punchin" />
+                </div>
+                <div class="" id="breakdiv" style="display:none;">
+                    <input type="button" name="Break" value="Break" id="breakbtn" class="btn btn-danger" />
+                </div>
+                <div class="" id="continuediv" style="display:none;">
+                    <input type="button" name="Continue" value="Continue" id="ctnbtn" class="btn btn-success" />
+                </div>
+                <div class="" id="punchoutdiv" style="display:none;">
+                    <input type="button" name="Punch Out" value="Punch Out" id="punchoutbtn" class="btn btn-secondary" />
+                </div>
+                <div class="" id="continueWorkingHoursDiv" style="display:none;">
+                    <input type="button" name="Continue Working Hours" value="Continue Working Hours" id="ctnWorkingHoursBtn" class="btn btn-warning" />
+                </div>
+            </div>
+        </div>
+    </center>
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+
+<script type="text/javascript">
+    let time = document.getElementById('time');
+    let punchin = document.getElementById('punchinbtn');
+    let punchout = document.getElementById('punchoutbtn');
+    let breakbtn = document.getElementById('breakbtn');
+    let continuebtn = document.getElementById('ctnbtn');
+    let isOnBreak = false;
+
+    let timeCount = 0,
+        currentTimeout;
+
+    let isTimerRunning = false;
+
+    function play() {
+        isTimerRunning = true;
+        clearInterval(currentTimeout);
+        currentTimeout = setInterval(() => {
+            timeCount++;
+            const hours = String(Math.trunc(timeCount / 3600)).padStart(2, '0');
+            const min = String(Math.trunc(timeCount / 60)).padStart(2, 0);
+            const sec = String(Math.trunc(timeCount % 60)).padStart(2, 0);
+            time.innerHTML = `${hours} : ${min} : ${sec}`;
+
+            localStorage.setItem('timerTime', timeCount);
+            localStorage.setItem('isTimerRunning', isTimerRunning);
+            console.log(timeCount);
+        }, 1000);
+    }
+
+    function resettime() {
+        clearInterval(currentTimeout);
+        timeCount = 0;
+        time.innerHTML = '00 : 00 : 00';
+        isTimerRunning = false;
+
+        localStorage.removeItem('timerTime');
+        localStorage.removeItem('isTimerRunning');
+    }
+
+
+    function formatTime(time) {
+        const hours = String(Math.trunc(time / 3600)).padStart(2, '0');
+        const min = String(Math.trunc(time / 60)).padStart(2, 0);
+        const sec = String(Math.trunc(time % 60)).padStart(2, 0);
+        return `${hours} : ${min} : ${sec}`;
+    }
+
+    window.addEventListener('beforeunload', function () {
+        localStorage.setItem('isTimerRunning', isTimerRunning);
+    });
+
+    function toggleTimer() {
+        if (isTimerRunning) {
+            pause();
+            isTimerRunning = false;
+        } else {
+            play();
+            isTimerRunning = true;
+        }
+    }
+
+    function pause() {
+        isTimerRunning = false;
+        clearInterval(currentTimeout);
+    }
+
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    function loadPausedTime() {
+        var pausedTime = JSON.parse(localStorage.getItem('pausedTime'));
+        if (pausedTime) {
+            time.innerHTML = `${pausedTime.hours} : ${pausedTime.minutes} : ${pausedTime.seconds}`;
+        }
+    }
+
+    $(document).ready(function () {
+        //-----------------------------------------------------
+        //-----------------------------------------------------
+        var currentTime = new Date();
+
+        $.ajax({
+            url: '/User/checkpunchIn',
+            dataType: 'json',
+            type: 'GET',
+            traditional: true,
+            success: function (data) {
+                console.log(data);
+                //debugger
+                var PunchIn = getCookie("PunchIn");
+                var continueworking = getCookie("continueWork");
+                var breakCookie = getCookie("Break");
+                    if (data.data[0].PunchIn != null && data.data[0].PunchOut == null) {
+
+                        if (breakCookie == "Yes") {
+                            var Punchh = moment(data.data[0].PunchIn).toDate();
+                            var BreakStart = moment(data.data[0].BreakStartTime).toDate();
+
+                            var differencePB = BreakStart.getTime() - Punchh.getTime();
+                            var differenceInS = Math.abs(differencePB) / 1000;
+                            var h = Math.floor(differenceInS / 3600);
+                            var m = Math.floor((differenceInS % 3600) / 60);
+                            var s = Math.floor(differenceInS % 60);
+                            isTimerRunning = false;
+                            time.innerHTML = `${h} : ${m} : ${s}`;
+                            $('#punchindiv').css('display', 'none');
+                            $('#breakdiv').css('display', 'none');
+                            $('#continuediv').css('display', 'block');
+                            $('#punchoutdiv').css('display', 'block');
+                        }
+
+                        else if (data.data[0].BreakStartTime == null && data.data[0].BreakEndTime == null) {
+                            //console.log(data);
+                            var PunchInVal = moment(data.data[0].PunchIn).toDate();
+                            
+                            var differenceTime = currentTime.getTime() - PunchInVal.getTime();
+                            var differenceInSeconds = Math.abs(differenceTime) / 1000;
+                            var uhours = Math.floor(differenceInSeconds / 3600);
+                            var uminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                            var useconds = Math.floor(differenceInSeconds % 60);
+
+                            isTimerRunning = true;
+                            clearInterval(currentTimeout);
+                            currentTimeout = setInterval(() => {
+                                currentTime = new Date();
+                                var differenceTime = currentTime.getTime() - PunchInVal.getTime();
+                                var differenceInSeconds = Math.abs(differenceTime) / 1000;
+                                uhours = Math.floor(differenceInSeconds / 3600);
+                                uminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                                useconds = Math.floor(differenceInSeconds % 60);
+
+                                timeCount++;
+                                time.innerHTML = `${uhours} : ${uminutes} : ${useconds}`;
+    
+                                localStorage.setItem('timerTime', timeCount);
+                                localStorage.setItem('isTimerRunning', isTimerRunning);
+                                console.log(timeCount);
+                            }, 1000);
+                            $('#punchindiv').css('display', 'none');
+                            $('#breakdiv').css('display', 'block');
+                            $('#continuediv').css('display', 'none');
+                            $('#punchoutdiv').css('display', 'block');
+                        }
+
+                        else if (breakCookie == '') {
+                            console.log(data);
+                            var PunchInVal = moment(data.data[0].PunchIn).toDate();
+                            let breakDifff = moment(data.data[0].breakDifff).toDate();
+                            let breakms = breakDifff.getHours() * 3600 * 1000 + breakDifff.getMinutes() * 60 * 1000 + breakDifff.getSeconds() * 1000;
+
+                            var differenceTime = currentTime.getTime() - PunchInVal.getTime();
+                            var lastDiff = differenceTime - breakms;
+                            var differenceInSeconds = Math.abs(lastDiff) / 1000;
+                            var uhours = Math.floor(differenceInSeconds / 3600);
+                            var uminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                            var useconds = Math.floor(differenceInSeconds % 60);
+
+                            isTimerRunning = true;
+                            clearInterval(currentTimeout);
+                            currentTimeout = setInterval(() => {
+                                currentTime = new Date();
+                                var differenceTime = currentTime.getTime() - PunchInVal.getTime();
+                                var lastDiff = differenceTime - breakms;
+                                var differenceInSeconds = Math.abs(lastDiff) / 1000;
+                                uhours = Math.floor(differenceInSeconds / 3600);
+                                uminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                                useconds = Math.floor(differenceInSeconds % 60);
+
+                                timeCount++;
+                                time.innerHTML = `${uhours} : ${uminutes} : ${useconds}`;
+
+                                localStorage.setItem('timerTime', timeCount);
+                                localStorage.setItem('isTimerRunning', isTimerRunning);
+                                console.log(timeCount);
+                            }, 1000);
+
+                            $('#punchindiv').css('display', 'none');
+                            $('#breakdiv').css('display', 'block');
+                            $('#continuediv').css('display', 'none');
+                            $('#punchoutdiv').css('display', 'block');
+                        }
+                    }
+                        //-----------------------------------------------------------------------------
+                    //----------------------------------------------------------------------------------
+                if (data.data[0].PunchIn != null && data.data[0].PunchOut != null && continueworking == 'Yes') {
+                    if (breakCookie == "Yes") {
+                        let P = moment(data.data[0].PunchIn).toDate();
+                        let Po = moment(data.data[0].PunchOut).toDate();
+                        let DiffrntVal = moment(data.data[0].Diffrnt).toDate();
+                        let breakDifff = moment(data.data[0].breakDifff).toDate();
+                        let dpoTime = Po.getTime() - P.getTime();
+                        let DiffrntMs = DiffrntVal.getHours() * 3600 * 1000 + DiffrntVal.getMinutes() * 60 * 1000 + DiffrntVal.getSeconds() * 1000;
+                        let breakms = breakDifff.getHours() * 3600 * 1000 + breakDifff.getMinutes() * 60 * 1000 + breakDifff.getSeconds() * 1000;
+
+                        let DiffLast = dpoTime - (breakms + DiffrntMs);
+                        let DifSecond = Math.abs(DiffLast) / 1000;
+                        let ch = Math.floor(DifSecond / 3600);
+                        let cm = Math.floor((DifSecond % 3600) / 60);
+                        let cs = Math.floor(DifSecond % 60);
+
+                        isTimerRunning = false;
+                        time.innerHTML = `${ch} : ${cm} : ${cs}`;
+                        clearInterval(currentTimeout);
+
+                        localStorage.setItem('timerTime', timeCount);
+                        localStorage.setItem('isTimerRunning', isTimerRunning);
+
+                        $('#punchindiv').css('display', 'none');
+                        $('#breakdiv').css('display', 'none');
+                        $('#continuediv').css('display', 'block');
+                        $('#punchoutdiv').css('display', 'block');
+                        $('#continueWorkingHoursDiv').css('display', 'none');
+                    }
+
+                    if (breakCookie == '') {
+                        let current = new Date();
+
+                        $('#punchindiv').css('display', 'none');
+                        $('#breakdiv').css('display', 'block');
+                        $('#continuediv').css('display', 'none');
+                        $('#punchoutdiv').css('display', 'block');
+                        $('#continueWorkingHoursDiv').css('display', 'none');
+
+                        let PI = moment(data.data[0].PunchIn).toDate();
+                        let DiffrntVal = moment(data.data[0].Diffrnt).toDate();
+                        let breakDifff = moment(data.data[0].breakDifff).toDate();
+                        let DiffrntMs = DiffrntVal.getHours() * 3600 * 1000 + DiffrntVal.getMinutes() * 60 * 1000 + DiffrntVal.getSeconds() * 1000;
+                        let breakms = breakDifff.getHours() * 3600 * 1000 + breakDifff.getMinutes() * 60 * 1000 + breakDifff.getSeconds() * 1000;
+
+
+                        isTimerRunning = true;
+                        clearInterval(currentTimeout);
+                        currentTimeout = setInterval(() => {
+                            let currentTime = new Date();
+
+                            let differenceTime = currentTime.getTime() - PI.getTime();
+                            let breakDifference = breakms;
+                            let totalDifference = differenceTime - (DiffrntMs + breakDifference);
+                            let differenceInSeconds = Math.abs(totalDifference) / 1000;
+                            let chours = Math.floor(differenceInSeconds / 3600);
+                            let cminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                            let cseconds = Math.floor(differenceInSeconds % 60);
+
+                            timeCount++;
+                            time.innerHTML = `${chours} : ${cminutes} : ${cseconds}`;
+
+                            localStorage.setItem('timerTime', timeCount);
+                            localStorage.setItem('isTimerRunning', isTimerRunning);
+                            console.log(timeCount);
+                        }, 1000);
+                    }
+                    
+
+                }
+
+                        //-----------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------
+                else if (data.data[0].PunchIn != null && data.data[0].PunchOut != null && continueworking == '') {
+                    if (data.data[0].Diffrnt) {
+                        let current = new Date();
+
+                        let Po = moment(data.data[0].PunchOut).toDate();
+                        let PI = moment(data.data[0].PunchIn).toDate();
+                        let DiffrntVal = moment(data.data[0].Diffrnt).toDate();
+                        let breakDifff = moment(data.data[0].breakDifff).toDate();
+                        let DiffrntMs = DiffrntVal.getHours() * 3600 * 1000 + DiffrntVal.getMinutes() * 60 * 1000 + DiffrntVal.getSeconds() * 1000;
+                        console.log(breakDifff);
+                        let breakms = breakDifff.getHours() * 3600 * 1000 + breakDifff.getMinutes() * 60 * 1000 + breakDifff.getSeconds() * 1000;
+
+                        let differenceTime = Po.getTime() - PI.getTime();
+
+                        let totalDifference = differenceTime - (breakms + DiffrntMs);
+                        let differenceInSeconds = Math.abs(totalDifference) / 1000;
+                        let chours = Math.floor(differenceInSeconds / 3600);
+                        let cminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                        let cseconds = Math.floor(differenceInSeconds % 60);
+
+                        isTimerRunning = false;
+                        time.innerHTML = `${chours} : ${cminutes} : ${cseconds}`;
+                        clearInterval(currentTimeout);
+                        localStorage.setItem('timerTime', timeCount);
+                        localStorage.setItem('isTimerRunning', isTimerRunning);
+                        $('#punchindiv').css('display', 'none');
+                        $('#breakdiv').css('display', 'none');
+                        $('#continuediv').css('display', 'none');
+                        $('#punchoutdiv').css('display', 'none');
+                        $('#continueWorkingHoursDiv').css('display', 'block');
+                    }
+
+                    else if (data.data[0].BreakStartTime != null && data.data[0].BreakEndTime != null) {
+                        let P = moment(data.data[0].PunchIn).toDate();
+                        let Bs = moment(data.data[0].BreakStartTime).toDate();
+                        let BE = moment(data.data[0].BreakEndTime).toDate();
+                        let Po = moment(data.data[0].PunchOut).toDate();
+
+                        let dpoTime = Po.getTime() - P.getTime();
+                        let breakdif = BE.getTime() - Bs.getTime();
+
+                        let DiffLast = dpoTime - breakdif;
+                        let DifSecond = Math.abs(DiffLast) / 1000;
+                        let ch = Math.floor(DifSecond / 3600);
+                        let cm = Math.floor((DifSecond % 3600) / 60);
+                        let cs = Math.floor(DifSecond % 60);
+
+                        isTimerRunning = false;
+                        time.innerHTML = `${ch} : ${cm} : ${cs}`;
+                        clearInterval(currentTimeout);
+
+                        localStorage.setItem('timerTime', timeCount);
+                        localStorage.setItem('isTimerRunning', isTimerRunning);
+
+                        $('#punchindiv').css('display', 'none');
+                        $('#breakdiv').css('display', 'none');
+                        $('#continuediv').css('display', 'none');
+                        $('#punchoutdiv').css('display', 'none');
+                        $('#continueWorkingHoursDiv').css('display', 'block');
+                    }
+                    else {
+                        let P = moment(data.data[0].PunchIn).toDate();
+                        let Po = moment(data.data[0].PunchOut).toDate();
+
+                        let dpoTime = Po.getTime() - P.getTime();
+
+                        let DiffLast = dpoTime;
+                        let DifSecond = Math.abs(DiffLast) / 1000;
+                        let ch = Math.floor(DifSecond / 3600);
+                        let cm = Math.floor((DifSecond % 3600) / 60);
+                        let cs = Math.floor(DifSecond % 60);
+
+                        isTimerRunning = false;
+                        time.innerHTML = `${ch} : ${cm} : ${cs}`;
+                        clearInterval(currentTimeout);
+
+                        localStorage.setItem('timerTime', timeCount);
+                        localStorage.setItem('isTimerRunning', isTimerRunning);
+
+                        $('#punchindiv').css('display', 'none');
+                        $('#breakdiv').css('display', 'none');
+                        $('#continuediv').css('display', 'none');
+                        $('#punchoutdiv').css('display', 'none');
+                        $('#continueWorkingHoursDiv').css('display', 'block');
+                    }
+                }
+                else if (data.data = "datanull" && PunchIn == "") {
+                    console.log(data);
+                    $('#punchindiv').css('display', 'block');
+                    time.innerHTML = ` 00:00:00 `;
+                    }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+        $('thead').hide();
+
+        var Break = getCookie("Break");
+        if (Break === "" && PunchIn === "Yes") {
+            $('#punchindiv').css('display', 'none');
+            $('#breakdiv').css('display', 'block');
+            $('#continuediv').css('display', 'none');
+            $('#punchoutdiv').css('display', 'block');
+            location.reload();
+        }
+        if (Break === "Yes" && PunchIn === "Yes") {
+            $('#punchindiv').css('display', 'none');
+            $('#breakdiv').css('display', 'none');
+            $('#continuediv').css('display', 'block');
+            $('#punchoutdiv').css('display', 'block');
+        }
+    })
+
+    $('#punchinbtn').click(function () {
+        if (!isOnBreak) {
+            $.post("@Url.Action("PunchIn","User")", function (data) {
+                if (data.success) {
+                    play();
+                    $('#punchindiv').css('display', 'none');
+                    $('#breakdiv').css('display', 'block');
+                    $('#continuediv').css('display','none');
+                    $('#punchoutdiv').css('display', 'block');
+                    document.cookie = "PunchIn=Yes;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                    location.reload();
+                } else {
+                    alert("Failed to punch in.");
+                }
+            });
+        }
+    });
+
+    $('#breakbtn').click(function () {
+        pause();
+        
+         $.post("@Url.Action("StartEndBreak","User")", {startBreak: true }, function (data) {
+                if (data.success) {
+                    $('#breakdiv').css('display', 'none');
+                    $('#continuediv').css('display', 'block');
+                    $('#punchoutdiv').css('display', 'block');
+                    document.cookie = "Break=Yes;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                    var currentTime = new Date();
+
+                    var differenceTime = currentTime.getTime() - PunchInVal.getTime();
+                    var differenceInSeconds = Math.abs(differenceTime) / 1000;
+                    var uhours = Math.floor(differenceInSeconds / 3600);
+                    var uminutes = Math.floor((differenceInSeconds % 3600) / 60);
+                    var useconds = Math.floor(differenceInSeconds % 60);
+
+                    time.innerHTML = `${uhours} : ${uminutes} : ${useconds}`;
+
+                    localStorage.setItem('pausedTime', JSON.stringify({
+                        hours: uhours,
+                        minutes: uminutes,
+                        seconds: useconds
+                    }));
+                    location.reload();
+                }
+                else {
+                    alert("Failed to start break.");
+                }
+            });
+    });
+
+    $('#ctnbtn').click(function () {
+        $.post("@Url.Action("StartEndBreak","User")", {startBreak: false }, function (data) {
+            if (!data.success) {
+                alert("Failed to end break.");
+            }
+            $('#punchindiv').css('display', 'none');
+            $('#breakdiv').css('display', 'block');
+            $('#continuediv').css('display', 'none');
+            $('#punchoutdiv').css('display', 'block');
+            document.cookie = "Break=;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            location.reload();
+        });
+    });
+
+
+    $('#punchoutbtn').click(function () {
+        clearInterval(currentTimeout);
+        $.post("@Url.Action("PunchOut","User")", function (data) {
+            console.log("Punch Out data: ",data);
+            if (data.success) {
+                resettime();
+                document.cookie = "PunchIn=;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                document.cookie = "Break=;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                document.cookie = "continueWork=;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                location.reload();
+            } else {
+                alert("Failed to punch out.");
+            }
+        });
+    });
+
+    $('#ctnWorkingHoursBtn').click(function () {
+        $.ajax({
+            url: '/User/continueWork',
+            dataType: 'json',
+            type: 'GET',
+            traditional: true,
+            success: function (data) {
+        document.cookie = "continueWork=Yes;expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                if (data) {
+                location.reload();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    });
+
+</script>

@@ -28,6 +28,9 @@
         <AssociationConnector Association="liveProjectModel.FK_Technology_technologyGroup" />
         <EntityTypeShape EntityType="liveProjectModel.Type" Width="1.5" PointX="8.375" PointY="0.875" />
         <AssociationConnector Association="liveProjectModel.FK__Resources__TypeI__6FE99F9F" />
+        <EntityTypeShape EntityType="liveProjectModel.AspNetUser" Width="1.5" PointX="8.375" PointY="4" />
+        <EntityTypeShape EntityType="liveProjectModel.TimeEntry" Width="1.5" PointX="10.625" PointY="4.625" />
+        <AssociationConnector Association="liveProjectModel.FK_UserId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

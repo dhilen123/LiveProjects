@@ -20,6 +20,23 @@
           <Property Name="technology" Type="int" />
           <Property Name="techGroup" Type="int" />
         </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="Designation">
           <Key>
             <PropertyRef Name="designId" />
@@ -96,6 +113,19 @@
           <Property Name="techGroupName" Type="varchar" MaxLength="30" />
           <Property Name="description" Type="varchar" MaxLength="200" />
           <Property Name="enable" Type="bit" />
+        </EntityType>
+        <EntityType Name="TimeEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PunchIn" Type="datetime" Nullable="false" />
+          <Property Name="PunchOut" Type="datetime" />
+          <Property Name="BreakStartTime" Type="datetime" />
+          <Property Name="BreakEndTime" Type="datetime" />
+          <Property Name="userId" Type="nvarchar" MaxLength="128" />
+          <Property Name="Diffrnt" Type="datetime" />
+          <Property Name="breakDifff" Type="datetime" />
         </EntityType>
         <EntityType Name="Type">
           <Key>
@@ -273,8 +303,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="TimeEntry" Type="Self.TimeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TimeEntry">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="liveProjectModelStoreContainer">
           <EntitySet Name="Allocation" EntityType="Self.Allocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
@@ -282,6 +325,7 @@
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Technology" EntityType="Self.Technology" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="technologyGroup" EntityType="Self.technologyGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TimeEntry" EntityType="Self.TimeEntry" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Type" EntityType="Self.Type" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Allocatio__projI__45F365D3" Association="Self.FK__Allocatio__projI__45F365D3">
             <End Role="Project" EntitySet="Project" />
@@ -338,6 +382,10 @@
           <AssociationSet Name="FK_Technology_technologyGroup" Association="Self.FK_Technology_technologyGroup">
             <End Role="technologyGroup" EntitySet="technologyGroup" />
             <End Role="Technology" EntitySet="Technology" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserId" Association="Self.FK_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="TimeEntry" EntitySet="TimeEntry" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -661,6 +709,12 @@
             <End Role="Type" EntitySet="Types" />
             <End Role="Resource" EntitySet="Resources" />
           </AssociationSet>
+          <EntitySet Name="AspNetUsers" EntityType="liveProjectModel.AspNetUser" />
+          <EntitySet Name="TimeEntries" EntityType="liveProjectModel.TimeEntry" />
+          <AssociationSet Name="FK_UserId" Association="liveProjectModel.FK_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="TimeEntry" EntitySet="TimeEntries" />
+          </AssociationSet>
         </EntityContainer>
         <Association Name="FK_Allocation_technologyGroup">
           <End Type="liveProjectModel.technologyGroup" Role="technologyGroup" Multiplicity="0..1" />
@@ -704,6 +758,50 @@
             </Principal>
             <Dependent Role="Resource">
               <PropertyRef Name="TypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TimeEntries" Relationship="liveProjectModel.FK_UserId" FromRole="AspNetUser" ToRole="TimeEntry" />
+        </EntityType>
+        <EntityType Name="TimeEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PunchIn" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PunchOut" Type="DateTime" Precision="3" />
+          <Property Name="BreakStartTime" Type="DateTime" Precision="3" />
+          <Property Name="BreakEndTime" Type="DateTime" Precision="3" />
+          <Property Name="userId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="liveProjectModel.FK_UserId" FromRole="TimeEntry" ToRole="AspNetUser" />
+          <Property Name="Diffrnt" Type="DateTime" Precision="3" />
+          <Property Name="breakDifff" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_UserId">
+          <End Type="liveProjectModel.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="liveProjectModel.TimeEntry" Role="TimeEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TimeEntry">
+              <PropertyRef Name="userId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -818,6 +916,38 @@
               <MappingFragment StoreEntitySet="Type">
                 <ScalarProperty Name="Hours" ColumnName="Hours" />
                 <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="liveProjectModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimeEntries">
+            <EntityTypeMapping TypeName="liveProjectModel.TimeEntry">
+              <MappingFragment StoreEntitySet="TimeEntry">
+                <ScalarProperty Name="breakDifff" ColumnName="breakDifff" />
+                <ScalarProperty Name="Diffrnt" ColumnName="Diffrnt" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="BreakEndTime" ColumnName="BreakEndTime" />
+                <ScalarProperty Name="BreakStartTime" ColumnName="BreakStartTime" />
+                <ScalarProperty Name="PunchOut" ColumnName="PunchOut" />
+                <ScalarProperty Name="PunchIn" ColumnName="PunchIn" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -86,7 +86,7 @@ namespace LiveProjects.Controllers
                     return RedirectToAction("Index","Home", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("Password", "Username or password are incorrect");
                     return View(model);
             }
         }

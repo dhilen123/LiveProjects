@@ -115,7 +115,7 @@
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
 
-        <a class="navbar-brand ps-3" href="../Admin/Dashboard">Sigma Solve Project</a>
+        <a class="navbar-brand ps-3" href="@Url.Content("~/Home/Index")">Sigma Solve Project</a>
 
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
 
@@ -172,6 +172,18 @@
                             <div class="sb-nav-link-icon"><i class="bi bi-hourglass-split"></i></div>
                             HourlyReport
                         </a>
+                        <a class="nav-link" href="@Url.Content("~/User/Create")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-clock"></i></div>
+                            PunchIn
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/User/Attendance")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-table"></i></div>
+                            Attendance
+                        </a>
+                        <a class="nav-link" href="@Url.Content("~/User/Calendar")">
+                            <div class="sb-nav-link-icon"><i class="bi bi-calendar"></i></div>
+                            Calendar
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -223,15 +235,16 @@
                 $('.card').addClass('card-dark');
                 $('th, td').addClass('card-body-dark');
                 $('footer').addClass('card-dark');
-                $('tr').css('color', 'white');
+                $('tr').css('color', 'white').not('red-color','green-color');
+                $('.timercard').css('background', '#646161');
+                $('.timercard').css('box-shadow', 'none');
+                $('.Details').css('background-color', '#676767');
             }
-            
 
 
             $('#darkModeToggle').change(function () {
                 if ($(this).is(':checked')) {
                     document.cookie = "themeValue=dark-theme; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-
                     enableDarkMode();
                 } else {
                     document.cookie = "themeValue=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
@@ -239,7 +252,11 @@
                     $('#darkModeToggle').prop('checked', false);
                     $('.card').removeClass('card-dark');
                     $('th, td').removeClass('card-body-dark'); 
-                    $('tr').css('color', 'black'); 
+                    $('tr').css('color', 'black').not('red-color', 'green-color');
+                    $('.timercard').css('background', '#e0e0e0');
+                    var boxShadow = '15px 15px 30px #bebebe, -10px -10px 30px #ffffff';
+                    $('.timercard').css('box-shadow', boxShadow);
+                    $('.Details').css('background-color', '#dfdfdf');
                 }
             });
         });

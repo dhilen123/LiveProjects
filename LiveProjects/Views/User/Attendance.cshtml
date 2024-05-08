@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "Attendance";
+}
+
+<style>
+    .green-color {
+        color: #27db27;
+    }
+
+    .red-color {
+        color: red;
+    }
+</style>
+
+<h2>Attendance</h2>
+
+<div class="container">
+    <div class="row" style="display:flex; align-items:center; justify-content:center;">
+        <div class="form-group fw-bold mt-4 col-3">
+            <label for="datepicker">Start Date:</label><label class="text-danger">*</label>
+            <input type="date" id="Startdate" name="Startdate" class="form-control mt-1" required>
+        </div>
+
+        <div class="form-group fw-bold mt-4 col-3">
+            <label for="datepicker">End Date:</label><label class="text-danger">*</label>
+            <input type="date" id="Enddate" name="Enddate" class="form-control mt-1" required>
+        </div>
+    </div>
+
+    <center>
+        <div class="form-group">
+            <input type="button" id="searchButton" value="Search" class="btn btn-primary mt-3 mb-3" />
+        </div>
+    </center>
+</div>
+
+<table class="table table-bordered text-center mt-5" id="datatablesSimple" style="margin-top:20px;">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>PunchIn</th>
+            <th>Punch Out</th>
+            <th>BreakTime</th>
+            <th>Total WorkingHours</th>
+        </tr>
+    </thead>
+    <tbody id="MyTbody">
+    </tbody>
+
+</table>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+
+<script>
+    function performSearch() {
+        var StartDate = $('#Startdate').val();
+        var EndDate = $('#Enddate').val();
+
+        $.ajax({
+            type: 'GET',
+            url: '/User/UserData',
+            dataType: 'json',
+            data: {
+                StartDate: StartDate,
+                Enddate: EndDate
+            },
+            traditional: true,
+            success: function (result) {
+                console.log('success data:', result);
+                $('thead').show();
+                var tbody = $('#MyTbody');
+                tbody.empty();
+                var themeValue = getCookie("themeValue");
+
+                if (result.length !== 0) {
+                    $.each(result, function (index, item) {
+                        console.log(item);
+
+                        var rowColor = (themeValue === "dark-theme") ? 'white' : 'black';
+
+                        var row = $('<tr>').css('color', rowColor);
+
+                        row.append('<td>' + item.AspNetUser.Email + '</td>');
+                        row.append('<td>' + moment(item.PunchIn).format('DD/MM/YYYY HH:mm:ss') + '</td>');
+                        row.append('<td>' + moment(item.PunchOut).format('DD/MM/YYYY HH:mm:ss') + '</td>');
+
+                        if (item.breakDifff != null) {
+                            row.append('<td>' + moment(item.breakDifff).format('HH:mm:ss') + '</td>');
+                        } else {
+                            row.append('<td>00:00:00</td>');
+                        }
+
+                        if (item.TotalTime != null) {
+                            var totalHours = item.TotalTime.Hours || 0;
+                            var totalMinutes = item.TotalTime.Minutes || 0;
+                            var totalSeconds = item.TotalTime.Seconds || 0;
+
+                            var totalDurationString = totalHours + ":" + totalMinutes + ":" + totalSeconds;
+                            var totalMinutesCount = totalHours * 60 + totalMinutes;
+
+                            var cellClass = (totalMinutesCount >= (8 * 60 + 30)) ? 'green-color' : 'red-color';
+                            row.append('<td class="' + cellClass + '">' + totalDurationString + '</td>');
+                        } else {
+                            row.append('<td>00:00:00</td>');
+                        }
+
+                        tbody.append(row); 
+                    });
+                } else {
+                    var row = $('<tr>');
+                    row.append($('<td colspan="5">').text('No data found.'));
+                    tbody.append(row);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+
+        })
+    }
+
+    $(document).ready(function () {
+        $('thead').hide();
+    });
+
+    $('#searchButton').click(function () {
+        var Startdate = $('#Startdate').val();
+        var Enddate = $("#Enddate").val();
+        if (Startdate == "" || Enddate == "") {
+            alert("Startdate and Enddate both field is required.");
+            return false;
+        } else {
+            performSearch();
+            return true;
+        }
+    });
+</script>

@@ -1,7 +1,10 @@
 ﻿using liveProjectAllocation.Repository;
 using LiveProjects.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -11,6 +14,7 @@ namespace LiveProjects.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+
         public GenericUnitOfWork _unitOfWork = new GenericUnitOfWork();
         public ActionResult Index()
         {
@@ -29,6 +33,6 @@ namespace LiveProjects.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Login","Account");
         }
-
+       
     }
 }

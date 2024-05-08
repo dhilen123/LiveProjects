@@ -34,5 +34,7 @@ namespace LiveProjects.Models
         public virtual DbSet<Technology> Technologies { get; set; }
         public virtual DbSet<technologyGroup> technologyGroups { get; set; }
         public virtual DbSet<Type> Types { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<TimeEntry> TimeEntries { get; set; }
     }
 }

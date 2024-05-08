@@ -20,7 +20,6 @@ namespace LiveProjects.Repository
             string connection = ConfigurationManager.ConnectionStrings["liveProjectEntities2"].ConnectionString;
             con = new SqlConnection(connection);
         }
-
         public (List<Resource>, int) GetResource(int PageIndex, int PageSize)
         {
             connection();
@@ -311,7 +310,6 @@ namespace LiveProjects.Repository
             return (allocModel, Convert.ToInt32(cmd.Parameters["@RecordCount"].Value));
         }
 
-
         public (List<Allocation>, int) GetHourlyreports(SearchHourlyModel _search, int PageIndex, int PageSize)
         {
             if (_search.resourceId == -1)
@@ -399,11 +397,168 @@ namespace LiveProjects.Repository
             }
             else
             {
-                // Handle the case when TotalRecord is DBNull, e.g., set it to zero or any default value.
                 totalRecord = 0;
             }
 
             return (allocModel, totalRecord);
         }
+
+        public List<TimeEntry> getData(string userid, string StartDate, string EndDate)
+        {
+            connection();
+            List<TimeEntry> timeE = new List<TimeEntry>();
+            SqlCommand cmd = new SqlCommand("GetTimeEntriesWithUserName", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@StartDate", StartDate);
+            cmd.Parameters.AddWithValue("@EndDate", EndDate);
+            cmd.Parameters.AddWithValue("@UserId", userid);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            da.Fill(dt);
+            con.Close();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                DateTime? punchIn = null;
+                DateTime? punchOut = null;
+                DateTime? breakDifff = null;
+                TimeSpan? totalWorkingHours = null;
+
+                if (dr["PunchIn"] != DBNull.Value && DateTime.TryParse(dr["PunchIn"].ToString(), out DateTime parsedPunchIn))
+                {
+                    punchIn = parsedPunchIn;
+                }
+
+                if (dr["PunchOut"] != DBNull.Value && DateTime.TryParse(dr["PunchOut"].ToString(), out DateTime parsedPunchOut))
+                {
+                    punchOut = parsedPunchOut;
+                }
+
+                if (dr["breakDifff"] != DBNull.Value && DateTime.TryParse(dr["breakDifff"].ToString(), out DateTime parsedBreakDifff))
+                {
+                    breakDifff = parsedBreakDifff;
+                }
+
+                if (dr["TotalWorkingHours"] != DBNull.Value && TimeSpan.TryParse(dr["TotalWorkingHours"].ToString(), out TimeSpan parsedTotalHours))
+                {
+                    totalWorkingHours = parsedTotalHours;
+                }
+
+                timeE.Add(new TimeEntry
+                {
+                    PunchIn = punchIn ?? DateTime.MinValue,
+                    PunchOut = punchOut ?? DateTime.MinValue,
+                    breakDifff = breakDifff,
+                    TotalTime = totalWorkingHours,
+                    AspNetUser = new AspNetUser
+                    {
+                        Email = Convert.ToString(dr["Email"])
+                    }
+                });
+            }
+            return timeE;
+        }
+
+        public List<TimeEntry> getDatedata(string userId, string daate)
+        {
+            connection();
+            List<TimeEntry> timeE = new List<TimeEntry>();
+            SqlCommand cmd = new SqlCommand("spgetDatedata", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@SelectedDate", daate);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            da.Fill(dt);
+            con.Close();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                DateTime? punchIn = null;
+                DateTime? punchOut = null;
+                DateTime? breakDifff = null;
+                TimeSpan? totalWorkingHours = null;
+
+                if (dr["PunchIn"] != DBNull.Value && DateTime.TryParse(dr["PunchIn"].ToString(), out DateTime parsedPunchIn))
+                {
+                    punchIn = parsedPunchIn;
+                }
+
+                if (dr["PunchOut"] != DBNull.Value && DateTime.TryParse(dr["PunchOut"].ToString(), out DateTime parsedPunchOut))
+                {
+                    punchOut = parsedPunchOut;
+                }
+
+                if (dr["breakDifff"] != DBNull.Value && DateTime.TryParse(dr["breakDifff"].ToString(), out DateTime parsedBreakDifff))
+                {
+                    breakDifff = parsedBreakDifff;
+                }
+
+                if (dr["TotalWorkingHours"] != DBNull.Value && TimeSpan.TryParse(dr["TotalWorkingHours"].ToString(), out TimeSpan parsedTotalHours))
+                {
+                    totalWorkingHours = parsedTotalHours;
+                }
+
+                timeE.Add(new TimeEntry
+                {
+                    PunchIn = punchIn ?? DateTime.MinValue, 
+                    PunchOut = punchOut ?? DateTime.MinValue,
+                    breakDifff = breakDifff, 
+                    TotalTime = totalWorkingHours 
+                });
+            }
+
+            return timeE;
+        }
+
+
+
+        public List<TimeEntry> getUserData(string userId)
+        {
+            connection();
+            List<TimeEntry> timeE = new List<TimeEntry>();
+            SqlCommand cmd = new SqlCommand("spgetUserData", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            da.Fill(dt);
+            con.Close();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                TimeSpan totalWorkingHours;
+                if (dr["TotalWorkingHours"] != DBNull.Value && TimeSpan.TryParse(dr["TotalWorkingHours"].ToString(), out totalWorkingHours))
+                {
+                    TimeSpan breakTime;
+                    if (dr["BreakTime"] != DBNull.Value && TimeSpan.TryParse(dr["BreakTime"].ToString(), out breakTime))
+                    {
+                        timeE.Add(new TimeEntry
+                        {
+                            PunchIn = Convert.ToDateTime(dr["PunchIn"]),
+                            PunchOut = Convert.ToDateTime(dr["PunchOut"]),
+                            BreakTTime = breakTime,
+                            TotalTime = totalWorkingHours
+                        });
+                    }
+                    else
+                    {
+                        // Handle the case where BreakTime cannot be parsed
+                    }
+                }
+                else
+                {
+                    // Handle the case where TotalWorkingHours cannot be parsed
+                }
+            }
+            return timeE;
+        }
+
     }
 }

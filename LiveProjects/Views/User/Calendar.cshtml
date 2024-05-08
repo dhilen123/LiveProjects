@@ -1,0 +1,249 @@
+﻿
+<link href="~/Content/css/calendar.css" rel="stylesheet" />
+
+<div style="display: flex; align-items: center; margin-top:10px;">
+    <span style="font-weight:bold;">Attendance For : </span>
+    <select id="monthSelect" class="form-select">
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+    </select>
+</div>
+<div class="container-fluid">
+    <div class="row d-flex flex-wrap" style="margin-top:20px;">
+        <div class="col-lg-8 col-md-12" id="calendar">
+
+        </div>
+        <div class="col-lg-4 col-md-6 Details" style="border: 1px solid #dfdfdf; background: #f6f8fd;">
+            <div class="spnn" style="display:block;display:flex; height:100%; justify-content:center; align-items:center;"><span><b>select a Date to View details</b></span></div>
+
+            <div class="mainDiv" style="display:none;">
+                <div class="topD"></div>
+
+                <div class="workingh">
+                    <b>Working hours</b>
+
+                </div>
+
+                <hr />
+
+                <div class="sidediv2 m-2">
+                    <div class="inTime">
+                        <b>In-Time</b>
+
+                    </div>
+                    <div class="OutTime">
+                        <b>Out-Time</b>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="sidediv3 m-2">
+                    <div class="breakTime">
+                        <b>Total BreakTime</b>
+                    </div>
+                </div>
+            </div>
+
+            <div class="noData" style="display: none; height: 100%;">
+                <div style="display: flex; height: 100%; justify-content: center; align-items: center;">
+                    <b>No Data Found</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div>
+    <div style="display:flex; gap:4px;">
+        <div class="color-oval" style="background: linear-gradient(145deg, #ff6b6b, #d43636);"></div>
+        <div>Absent</div>
+        <div class="color-oval" style="background: linear-gradient(0deg, rgba(127,179,49,1) 13%, rgba(150,227,33,1) 86%);"></div>
+        <div>Present</div>
+        <div class="color-oval" style="background: linear-gradient(0deg, rgba(102,102,102,1) 13%, rgba(162,162,162,1) 86%);"></div>
+        <div>Weekoff</div>
+        <div class="color-oval" style="background: linear-gradient(0deg, rgba(251,128,4,1) 13%, rgba(255,153,20,1) 86%);"></div>
+        <div>Half Day</div>
+        <div class="color-oval" style="background: linear-gradient(0deg, rgba(17,125,162,1) 13%, rgba(25,197,255,1) 86%);"></div>
+        <div>Today</div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+
+<script>
+    //debugger
+    function createCalendar(year, month) {
+        const calendarDiv = document.getElementById('calendar');
+        calendarDiv.innerHTML = '';
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateBox = document.createElement('div');
+            dateBox.classList.add('dateBox');
+            dateBox.textContent = day;
+            dateBox.setAttribute('data-date', `${year}-${month + 1}-${day}`);
+
+            const dayOfWeek = new Date(year, month, day).getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                dateBox.style.background = 'linear-gradient(0deg, rgba(102,102,102,1) 13%, rgba(162,162,162,1) 86%);';
+            }
+
+            dateBox.addEventListener('click', function () {
+                const selectedDate = this.getAttribute('data-date');
+                fetchData(selectedDate);
+            });
+            calendarDiv.appendChild(dateBox);
+        }
+    }
+
+    function fetchData(selectedDate) {
+        const url = '@Url.Action("FetchData", "User")';
+        const data = { date: selectedDate };
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            traditional: true,
+            success: function (data) {
+                console.log(data);
+                if (data.lists.length != 0) {
+                    $('.spnn').css('display', 'none');
+                    $('.noData').css('display', 'none');
+                    $('.mainDiv').css('display', 'block');
+
+                    $('.topD').empty();
+                    $('.workingT').empty();
+                    $('.inT').empty();
+                    $('.outT').empty();
+                    $('.breakT').empty();
+
+                    //console.log(data);
+                    $('.topD').append('<big><b>' + data.Date + '</b></big>');
+                    $('.workingh').append('<div class="workingT">' + data.lists[0].TotalTime.Hours + ':' + data.lists[0].TotalTime.Minutes + ':' + data.lists[0].TotalTime.Seconds + '</div>');
+
+                    let punchinDate = moment(data.lists[0].PunchIn);
+                    let punchTime = punchinDate.format('HH:mm:ss');
+                    $('.inTime').append('<div class="inT">' + punchTime + '</div>');
+
+                    let punchoutDate = moment(data.lists[0].PunchOut);
+                    let punchoutTime = punchoutDate.format('HH:mm:ss');
+                    $('.OutTime').append('<div class="outT">' + punchoutTime + '</div>');
+                    if (data.lists[0].breakDifff != null) {
+                        let Totalbreak = moment(data.lists[0].breakDifff);
+                        let TotalB = Totalbreak.format('HH:mm:ss');
+                        $('.breakTime').append('<div class="breakT">' + TotalB + '</div>');
+                    }
+                    else {
+                        $('.breakTime').append('<div class="breakT"><p>00:00:00</p></div>');
+                    }
+                    
+                }
+                else {
+                    $('.spnn').css('display', 'none');
+                    $('.mainDiv').css('display', 'none');
+                    $('.noData').css('display', 'block');
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error('Error:', errorThrown);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        function fetchDataForMonth(year, month) {
+            const url = '/User/FetchDataForMonth';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ year: year, month: month + 1 }),
+                success: function (data) {
+                    updateCalendarWithData(data);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error:', errorThrown);
+                }
+            });
+        }
+         
+        function updateCalendarWithData(data) {
+            const dateBoxes = document.getElementsByClassName('dateBox');
+            const currentDate = moment().startOf('day');
+
+            for (const dateBox of dateBoxes) {
+                const dateValue = dateBox.getAttribute('data-date');
+                const boxDate = moment(dateValue, 'YYYY-MM-DD').startOf('day');
+                const dayOfWeek = boxDate.day();
+
+                if (boxDate.isSame(currentDate, 'day')) {
+                    dateBox.style.background = 'linear-gradient(0deg, rgba(26,159,204,1) 13%, rgba(100,216,255,1) 86%)';
+                }
+                else if (boxDate.isBefore(currentDate)) {
+
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        dateBox.style.background = 'linear-gradient(0deg, rgba(102, 102, 102, 1) 13%, rgba(162, 162, 162, 1) 86%)';
+                    }
+                    else {
+                        const matchingRecord = data.data.find(record => moment(record.Date).isSame(boxDate, 'day'));
+
+                        if (matchingRecord && matchingRecord.PunchIn) {
+                            const totalWorkingHours = matchingRecord.TotalTime ? (matchingRecord.TotalTime.Hours * 60 + matchingRecord.TotalTime.Minutes) : 0;
+
+                            if (totalWorkingHours >= (8 * 60 + 30)) {
+                                dateBox.style.background = 'linear-gradient(0deg, rgba(127, 179, 49, 1) 13%, rgba(150, 227, 33, 1) 86%)';
+                            }
+                            else {
+                                dateBox.style.background = 'linear-gradient(0deg, rgba(251, 128, 4, 1) 13%, rgba(255, 153, 20, 1) 86%)';
+                            }
+                        }
+                        else {
+                            dateBox.style.background = 'linear-gradient(145deg, #ff6b6b, #d43636)';
+                        }
+                    }
+                }
+                else {
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        dateBox.style.background = 'linear-gradient(0deg, rgba(102, 102, 102, 1) 13%, rgba(162, 162, 162, 1) 86%)';
+                    }
+                    else {
+                        dateBox.style.background = '';
+                    }
+                }
+            }
+        }
+
+        $('#monthSelect').change(function () {
+            const selectedMonth = parseInt($(this).val());
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            createCalendar(currentYear, selectedMonth);
+            fetchDataForMonth(currentYear, selectedMonth);
+        });
+
+        const currentMonthIndex = new Date().getMonth();
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        $('#monthSelect').val(currentMonthIndex.toString());
+        createCalendar(currentYear, currentMonthIndex);
+        fetchDataForMonth(currentYear, currentMonthIndex);
+    });
+
+</script>

@@ -11,9 +11,7 @@ namespace LiveProjects.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
-
+    
     public partial class Resource
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,30 +20,15 @@ namespace LiveProjects.Models
             this.Allocations = new HashSet<Allocation>();
             this.Projects = new HashSet<Project>();
         }
-
+    
         public int resId { get; set; }
-        [DisplayName("Resource Name")]
-        [Required(ErrorMessage = "Please Enter Name")]
         public string resName { get; set; }
-        [DisplayName("Department")]
-        [Required(ErrorMessage = "Please Enter Department")]
         public string resDepartment { get; set; }
-        [DisplayName("Technology")]
-        [Required(ErrorMessage = "Please Select Technology")]
         public Nullable<int> technologyGroup { get; set; }
-        [DisplayName("Primary Technology")]
-        [Required(ErrorMessage = "Please Select Technology")]
         public Nullable<int> primaryTechnology { get; set; }
-        [DisplayName("Secondary Technology")]
-        [Required(ErrorMessage = "Please Select Technology")]
         public Nullable<int> secondaryTechnology { get; set; }
-        [DisplayName("Designation")]
-        [Required(ErrorMessage = "Please Select Designation ")]
         public Nullable<int> designation { get; set; }
-        [DisplayName("Role")]
-        [Required(ErrorMessage = "Please Select Role")]
         public Nullable<int> resRole { get; set; }
-        [DisplayName("Is Active")]
         public bool isActive { get; set; }
         public Nullable<int> TypeId { get; set; }
     
