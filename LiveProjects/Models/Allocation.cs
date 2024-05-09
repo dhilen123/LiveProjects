@@ -11,17 +11,40 @@ namespace LiveProjects.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Allocation
     {
         public int allocId { get; set; }
+        [DisplayName("Project Name")]
+        [Required(ErrorMessage = "Please Enter Project Name")]
         public Nullable<int> projId { get; set; }
+        [DisplayName("Resource Name")]
+        [Required(ErrorMessage = "Please Select Resource Name")]
         public Nullable<int> resId { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayName("Start Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Please Select Start Date")]
         public Nullable<System.DateTime> startDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayName("End Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Please Select End Date")]
         public Nullable<System.DateTime> endDate { get; set; }
+        [DisplayName("Allocation%")]
+        [Required(ErrorMessage = "Please Enter Allocation")]
+        [RegularExpression(@"^(\d{1,2}(\.\d{1,3})?|100(\.0{1,3})?)$", ErrorMessage = "Minimum 2 and Maximum 3 are allow")]
         public Nullable<int> allocation1 { get; set; }
+        [DisplayName("Is Billable")]
+        [Required(ErrorMessage = "Please Select Billable-NB")]
         public Nullable<bool> isBillable { get; set; }
+        [DisplayName("Role")]
+        [Required(ErrorMessage = "Please Select Role")]
         public Nullable<int> role { get; set; }
+        [DisplayName("Technology")]
+        [Required(ErrorMessage = "Please Select Technology")]
         public Nullable<int> technology { get; set; }
         public Nullable<int> techGroup { get; set; }
         public decimal PlannedHours { get; set; }
